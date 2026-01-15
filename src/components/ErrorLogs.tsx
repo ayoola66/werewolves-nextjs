@@ -221,154 +221,147 @@ export default function ErrorLogs() {
                           key={error.id}
                           className="bg-black/40 border-purple-500/30 hover:border-purple-500/60 transition-colors"
                         >
-                          <CardContent className="pt-6">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                  <Badge variant={getStatusBadgeVariant(error.status)}>
-                                    {error.status}
-                                  </Badge>
-                                  {error.status === 'resolved' && (
-                                    <Badge variant="outline" className="bg-green-600/30 text-green-400 border-green-500/50">
-                                      ✓ Resolved
-                                    </Badge>
-                                  )}
-                                  <Badge variant={getSourceBadgeVariant(error.source)}>
-                                    {error.source}
-                                  </Badge>
-                                  {error.function_name && (
-                                    <Badge variant="outline">{error.function_name}</Badge>
-                                  )}
-                                  {error.game_code && (
-                                    <Badge variant="outline" className="bg-purple-600/30">Game: {error.game_code}</Badge>
-                                  )}
-                                </div>
-                                <h3 className="font-semibold text-white mb-1">{error.message}</h3>
-                                {error.details && (
-                                  <p className="text-sm text-gray-400 mb-2 line-clamp-2">{error.details}</p>
-                                )}
-                                {error.game_code && (
-                                  <p className="text-xs text-purple-400 mb-1">Game Code: {error.game_code}</p>
-                                )}
-                                <div className="flex items-center gap-4 text-xs text-gray-500">
-                                  <span>{new Date(error.timestamp).toLocaleString()}</span>
-                                  {error.resolved_at && (
-                                    <span className="text-green-400">
-                                      Resolved: {new Date(error.resolved_at).toLocaleString()}
-                                    </span>
-                                  )}
-                                </div>
-                                {error.notes && (
-                                  <p className="text-sm text-gray-300 mt-2 italic">Note: {error.notes}</p>
-                                )}
-                              </div>
-                              <div className="flex gap-2 ml-4">
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => setSelectedError(error)}
-                                      className="text-purple-400 hover:text-purple-300"
-                                      title={error.status === 'resolved' ? 'View details (read-only)' : 'View details'}
-                                    >
-                                      <FileText className="w-4 h-4" />
-                                    </Button>
-                                  </DialogTrigger>
-                                  <DialogContent className="bg-black border-purple-500/50 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
-                                    <DialogHeader>
-                                      <DialogTitle>Error Details</DialogTitle>
-                                      <DialogDescription className="text-gray-300">
-                                        {error.status === 'resolved' ? 'This error has been resolved (read-only)' : 'Full error information and stack trace'}
-                                      </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="space-y-4">
-                                      {error.status === 'resolved' && (
-                                        <div className="bg-green-900/30 border border-green-500/50 rounded p-3">
-                                          <div className="flex items-center gap-2 text-green-400">
-                                            <CheckCircle2 className="w-5 h-5" />
-                                            <span className="font-semibold">This error has been resolved</span>
-                                          </div>
-                                          {error.resolved_at && (
-                                            <p className="text-sm text-gray-300 mt-1">
-                                              Resolved on: {new Date(error.resolved_at).toLocaleString()}
-                                            </p>
-                                          )}
+                          <CardContent className="p-4">
+                            {/* Main content area */}
+                            <div className="flex items-center gap-2 mb-2 flex-wrap">
+                              <Badge variant={getStatusBadgeVariant(error.status)}>
+                                {error.status}
+                              </Badge>
+                              {error.status === 'resolved' && (
+                                <Badge variant="outline" className="bg-green-600/30 text-green-400 border-green-500/50">
+                                  ✓ Resolved
+                                </Badge>
+                              )}
+                              <Badge variant={getSourceBadgeVariant(error.source)}>
+                                {error.source}
+                              </Badge>
+                              {error.function_name && (
+                                <Badge variant="outline">{error.function_name}</Badge>
+                              )}
+                              {error.game_code && (
+                                <Badge variant="outline" className="bg-purple-600/30">Game: {error.game_code}</Badge>
+                              )}
+                            </div>
+                            <h3 className="font-semibold text-white mb-1 text-sm">{error.message}</h3>
+                            {error.details && (
+                              <p className="text-xs text-gray-400 mb-2 line-clamp-2">{error.details}</p>
+                            )}
+                            <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                              <span>{new Date(error.timestamp).toLocaleString()}</span>
+                              {error.resolved_at && (
+                                <span className="text-green-400">
+                                  ✓ {new Date(error.resolved_at).toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
+                            {error.notes && (
+                              <p className="text-xs text-gray-300 mb-2 italic">Note: {error.notes}</p>
+                            )}
+                            
+                            {/* Action buttons - always visible in a row */}
+                            <div className="grid grid-cols-4 gap-1 pt-2 border-t border-purple-500/20">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setSelectedError(error)}
+                                    className="text-purple-400 hover:text-purple-300 hover:bg-purple-500/20 border-purple-500/30 text-xs px-2"
+                                    title="View details"
+                                  >
+                                    <FileText className="w-3 h-3 mr-1" />
+                                    View
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="bg-black border-purple-500/50 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+                                  <DialogHeader>
+                                    <DialogTitle>Error Details</DialogTitle>
+                                    <DialogDescription className="text-gray-300">
+                                      {error.status === 'resolved' ? 'This error has been resolved (read-only)' : 'Full error information and stack trace'}
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="space-y-4">
+                                    {error.status === 'resolved' && (
+                                      <div className="bg-green-900/30 border border-green-500/50 rounded p-3">
+                                        <div className="flex items-center gap-2 text-green-400">
+                                          <CheckCircle2 className="w-5 h-5" />
+                                          <span className="font-semibold">This error has been resolved</span>
                                         </div>
-                                      )}
-                                      <div>
-                                        <label className="text-sm font-semibold text-gray-400">Message</label>
-                                        <p className="text-white">{error.message}</p>
+                                        {error.resolved_at && (
+                                          <p className="text-sm text-gray-300 mt-1">
+                                            Resolved on: {new Date(error.resolved_at).toLocaleString()}
+                                          </p>
+                                        )}
                                       </div>
-                                      {error.details && (
-                                        <div>
-                                          <label className="text-sm font-semibold text-gray-400">Details</label>
-                                          <p className="text-white whitespace-pre-wrap">{error.details}</p>
-                                        </div>
-                                      )}
-                                      {error.stack && (
-                                        <div>
-                                          <label className="text-sm font-semibold text-gray-400">Stack Trace</label>
-                                          <pre className="text-xs bg-black/60 p-3 rounded overflow-x-auto text-gray-300">
-                                            {error.stack}
-                                          </pre>
-                                        </div>
-                                      )}
-                                      {error.url && (
-                                        <div>
-                                          <label className="text-sm font-semibold text-gray-400">URL</label>
-                                          <p className="text-white text-sm break-all">{error.url}</p>
-                                        </div>
-                                      )}
-                                      {error.notes && (
-                                        <div>
-                                          <label className="text-sm font-semibold text-gray-400">Notes</label>
-                                          <p className="text-white">{error.notes}</p>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </DialogContent>
-                                </Dialog>
-                                {error.status !== 'resolved' && (
-                                  <>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => updateErrorStatus(error.id, 'resolved')}
-                                      className="text-green-400 hover:text-green-300"
-                                      title="Mark as resolved"
-                                    >
-                                      <CheckCircle2 className="w-4 h-4" />
-                                    </Button>
-                                    {error.status !== 'ignored' && (
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => updateErrorStatus(error.id, 'ignored')}
-                                        className="text-gray-400 hover:text-gray-300"
-                                        title="Ignore"
-                                      >
-                                        <XCircle className="w-4 h-4" />
-                                      </Button>
                                     )}
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => deleteError(error.id)}
-                                      className="text-red-400 hover:text-red-300"
-                                      title="Delete"
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  </>
-                                )}
-                                {error.status === 'resolved' && (
-                                  <div className="flex items-center gap-2 text-green-400 text-sm">
-                                    <CheckCircle2 className="w-4 h-4" />
-                                    <span className="text-xs">Resolved</span>
+                                    <div>
+                                      <label className="text-sm font-semibold text-gray-400">Message</label>
+                                      <p className="text-white">{error.message}</p>
+                                    </div>
+                                    {error.details && (
+                                      <div>
+                                        <label className="text-sm font-semibold text-gray-400">Details</label>
+                                        <p className="text-white whitespace-pre-wrap">{error.details}</p>
+                                      </div>
+                                    )}
+                                    {error.stack && (
+                                      <div>
+                                        <label className="text-sm font-semibold text-gray-400">Stack Trace</label>
+                                        <pre className="text-xs bg-black/60 p-3 rounded overflow-x-auto text-gray-300">
+                                          {error.stack}
+                                        </pre>
+                                      </div>
+                                    )}
+                                    {error.url && (
+                                      <div>
+                                        <label className="text-sm font-semibold text-gray-400">URL</label>
+                                        <p className="text-white text-sm break-all">{error.url}</p>
+                                      </div>
+                                    )}
+                                    {error.notes && (
+                                      <div>
+                                        <label className="text-sm font-semibold text-gray-400">Notes</label>
+                                        <p className="text-white">{error.notes}</p>
+                                      </div>
+                                    )}
                                   </div>
-                                )}
-                              </div>
+                                </DialogContent>
+                              </Dialog>
+                              
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => updateErrorStatus(error.id, 'resolved')}
+                                className={`text-xs px-2 ${error.status === 'resolved' ? 'text-green-400 border-green-500/50 bg-green-500/20' : 'text-green-400 hover:text-green-300 hover:bg-green-500/20 border-green-500/30'}`}
+                                disabled={error.status === 'resolved'}
+                                title="Mark as resolved"
+                              >
+                                <CheckCircle2 className="w-3 h-3 mr-1" />
+                                {error.status === 'resolved' ? '✓' : 'Fix'}
+                              </Button>
+                              
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => updateErrorStatus(error.id, 'ignored')}
+                                className={`text-xs px-2 ${error.status === 'ignored' ? 'text-gray-400 border-gray-500/50 bg-gray-500/20' : 'text-gray-400 hover:text-gray-300 hover:bg-gray-500/20 border-gray-500/30'}`}
+                                disabled={error.status === 'resolved' || error.status === 'ignored'}
+                                title="Ignore this error"
+                              >
+                                <XCircle className="w-3 h-3 mr-1" />
+                                Ignore
+                              </Button>
+                              
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => deleteError(error.id)}
+                                className="text-red-400 hover:text-red-300 hover:bg-red-500/20 border-red-500/30 text-xs px-2"
+                                title="Delete this error"
+                              >
+                                <Trash2 className="w-3 h-3 mr-1" />
+                                Del
+                              </Button>
                             </div>
                           </CardContent>
                         </Card>
