@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle } from 'lucide-react';
 import { useErrorLog } from '@/hooks/useErrorLog';
+import Footer from '@/components/Footer';
 
 interface InitialScreenProps {
   gameState: any;
@@ -32,33 +33,44 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
   };
 
   return (
-    <div className="text-center">
-      <h1 className="font-cinzel text-6xl md:text-8xl font-bold mb-4 text-red-500 relative">
-        <span className="absolute inset-0 text-white blur-sm opacity-80 transform scale-105">WEREWOLF</span>
-        <span className="absolute inset-0 text-yellow-300 blur-md opacity-40 transform scale-110">WEREWOLF</span>
-        <span className="relative bg-gradient-to-b from-red-400 to-red-600 bg-clip-text text-transparent drop-shadow-2xl">WEREWOLF</span>
-      </h1>
-      <p className="text-gray-300 mb-12 text-lg font-medium">
-        Where pointing fingers is totally normal and trust issues are a feature, not a bug!
-      </p>
-      
-      {/* Error Logs Link */}
-      <div className="mb-6 flex justify-center">
-        <Link href="/error-logs">
-          <Button
-            variant="outline"
-            className="bg-black/40 border-purple-500/50 text-purple-300 hover:bg-purple-500/20 hover:text-purple-200"
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-grow flex flex-col items-center justify-center px-4 py-12">
+        <div className="text-center">
+          <h1 className="font-cinzel text-6xl md:text-8xl font-bold mb-4 text-red-500 relative">
+            <span className="absolute inset-0 text-white blur-sm opacity-80 transform scale-105">WEREWOLF</span>
+            <span className="absolute inset-0 text-yellow-300 blur-md opacity-40 transform scale-110">WEREWOLF</span>
+            <span className="relative bg-gradient-to-b from-red-400 to-red-600 bg-clip-text text-transparent drop-shadow-2xl">WEREWOLF</span>
+          </h1>
+          <p className="text-gray-300 mb-2 text-lg font-medium">
+            Where pointing fingers is totally normal and trust issues are a feature, not a bug!
+          </p>
+          
+          {/* How to Play Link */}
+          <Link 
+            href="/how-to-play" 
+            className="inline-block text-purple-400 hover:text-purple-300 text-sm mb-8 underline underline-offset-2"
           >
-            <AlertCircle className="w-4 h-4 mr-2" />
-            Error Logs
-            {newErrorsCount > 0 && (
-              <Badge variant="destructive" className="ml-2">
-                {newErrorsCount}
-              </Badge>
-            )}
-          </Button>
-        </Link>
-      </div>
+            📖 How to Play
+          </Link>
+          
+          {/* Error Logs Link - only visible for developers */}
+          <div className="mb-6 flex justify-center">
+            <Link href="/error-logs">
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-black/40 border-gray-700 text-gray-500 hover:bg-gray-800 hover:text-gray-400 text-xs"
+              >
+                <AlertCircle className="w-3 h-3 mr-1" />
+                Error Logs
+                {newErrorsCount > 0 && (
+                  <Badge variant="destructive" className="ml-2 text-xs">
+                    {newErrorsCount}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
+          </div>
       
       <div className="space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center">
         <Button
@@ -132,6 +144,10 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
           </CardContent>
         </Card>
       )}
+        </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 }
