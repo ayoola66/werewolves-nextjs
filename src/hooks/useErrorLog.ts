@@ -210,19 +210,21 @@ export function useErrorLog() {
     }
   }, []);
 
+  // Clear old RESOLVED errors (older than 30 days)
   const clearAllErrors = useCallback(async () => {
     try {
-      // Delete all errors older than 30 days
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+      // Only delete RESOLVED errors older than 30 days
       const { error } = await supabase
         .from('error_logs')
         .delete()
+        .eq('status', 'resolved')
         .lt('timestamp', thirtyDaysAgo.toISOString());
 
       if (error) {
-        console.error('Failed to clear old error logs:', error);
+        console.error('Failed to clear old resolved error logs:', error);
         throw error;
       }
 
@@ -236,6 +238,76 @@ export function useErrorLog() {
       setErrors(data || []);
     } catch (error) {
       console.error('Error clearing error logs:', error);
+      throw error;
+    }
+  }, []);
+
+  // Resolve all NEW errors at once
+  const resolveAllNew = useCallback(async () => {
+    try {
+      const now = new Date().toISOString();
+      
+      const { error } = await supabase
+        .from('error_logs')
+        .update({ 
+          status: 'resolved',
+          resolved_at: now,
+          resolved_by: 'bulk-resolve'
+        })
+        .eq('status', 'new');
+
+      if (error) {
+        console.error('Failed to resolve all new errors:', error);
+        throw error;
+      }
+
+      // Reload errors
+      const { data } = await supabase
+        .from('error_logs')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(500);
+
+      setErrors(data || []);
+      return { success: true, count: data?.filter(e => e.status === 'resolved').length || 0 };
+    } catch (error) {
+      console.error('Error resolving all new errors:', error);
+      throw error;
+    }
+  }, []);
+
+  // Resolve errors by function name (for bulk fixing specific issues)
+  const resolveByFunctionName = useCallback(async (functionName: string) => {
+    try {
+      const now = new Date().toISOString();
+      
+      const { error, count } = await supabase
+        .from('error_logs')
+        .update({ 
+          status: 'resolved',
+          resolved_at: now,
+          resolved_by: 'bulk-resolve',
+          notes: `Auto-resolved: ${functionName} issue fixed`
+        })
+        .eq('status', 'new')
+        .eq('function_name', functionName);
+
+      if (error) {
+        console.error(`Failed to resolve ${functionName} errors:`, error);
+        throw error;
+      }
+
+      // Reload errors
+      const { data } = await supabase
+        .from('error_logs')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(500);
+
+      setErrors(data || []);
+      return { success: true, count: count || 0 };
+    } catch (error) {
+      console.error('Error resolving errors by function:', error);
       throw error;
     }
   }, []);
@@ -269,6 +341,8 @@ export function useErrorLog() {
     updateErrorStatus,
     deleteError,
     clearAllErrors,
+    resolveAllNew,
+    resolveByFunctionName,
     getErrorsByStatus,
     getNewErrorsCount,
     exportErrors,

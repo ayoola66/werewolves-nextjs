@@ -21,6 +21,7 @@ export default function ErrorLogs() {
     updateErrorStatus,
     deleteError,
     clearAllErrors,
+    resolveAllNew,
     getErrorsByStatus,
     getNewErrorsCount,
     exportErrors,
@@ -118,7 +119,18 @@ export default function ErrorLogs() {
                   <Download className="w-4 h-4 mr-1" />
                   Export
                 </Button>
-                {errors.length > 0 && (
+                {newErrorsCount > 0 && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={resolveAllNew}
+                    className="border-green-500/50 hover:bg-green-500/20 text-green-400"
+                  >
+                    <CheckCircle2 className="w-4 h-4 mr-1" />
+                    Resolve All ({newErrorsCount})
+                  </Button>
+                )}
+                {resolvedErrors.length > 0 && (
                   <Button
                     size="sm"
                     variant="destructive"
