@@ -36,12 +36,12 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-stone-texture" />
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-fixed opacity-20"
+          className="absolute inset-0 bg-cover bg-center bg-fixed"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')"
+            backgroundImage: "url('/logo/Werewolves-Village-background.png')"
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-deep-slate/80 via-transparent to-deep-slate/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-deep-slate/60 via-deep-slate/40 to-deep-slate/90" />
         <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-blood/10 via-transparent to-transparent" />
       </div>
       
