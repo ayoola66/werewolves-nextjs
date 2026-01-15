@@ -1,23 +1,24 @@
-# 🐺 Werewolf Online
+# 🐺 Werewolves Village
 
-A real-time multiplayer social deduction game built with Next.js and Supabase. Deceive, deduce, and survive!
+*Forged in Moonlight* — A real-time multiplayer social deduction game built with Next.js and Supabase. Deceive, deduce, and survive!
 
-**Live Demo:** [https://werewolves-nextjs.vercel.app](https://werewolves-nextjs.vercel.app)
+**Live Demo:** [https://werewolves-village.vercel.app](https://werewolves-village.vercel.app)
 
 ## 🎮 About the Game
 
-Werewolf is a classic social deduction party game where players are secretly assigned roles as either **Werewolves** or **Villagers**. The Werewolves know each other and must eliminate Villagers without being discovered. The Villagers must work together to identify and vote out the Werewolves before it's too late.
+Werewolves Village is a classic social deduction party game where players are secretly assigned roles as either **Werewolves** or **Villagers**. The Werewolves know each other and must eliminate Villagers without being discovered. The Villagers must work together to identify and vote out the Werewolves before it's too late.
 
 ### Features
 
 - 🌐 **Play Anywhere** - Browser-based, no downloads required
 - ⚡ **Real-Time** - Instant updates with Supabase Realtime
-- 🎭 **Multiple Roles** - Werewolf, Doctor, Seer, Bodyguard, Minion, Villager
+- 🎭 **Multiple Roles** - Werewolf, Doctor, Seer, Bodyguard, Hunter, Witch, Minion, Jester, Sheriff
 - 🛡️ **One-Time Shield** - Protect yourself from a single attack
 - ⚡ **Lightning Strike** - Anti-AFK system keeps games moving
 - 🔀 **Message Scrambling** - Werewolves coordinate secretly at night
 - 👻 **Spirit Vision** - Eliminated players can see the truth
 - 📱 **Responsive Design** - Works on desktop, tablet, and mobile
+- 🎨 **Medieval Modern Design** - "Ember & Shadow" colour palette with chiselled typography
 
 ## 🚀 Tech Stack
 
@@ -27,6 +28,21 @@ Werewolf is a classic social deduction party game where players are secretly ass
 - **Real-Time:** Supabase Realtime
 - **Hosting:** Vercel
 - **UI Components:** shadcn/ui
+
+## 🎨 Branding
+
+Werewolves Village uses the **"Forged in Moonlight"** design system:
+
+### Colour Palette (Ember & Shadow)
+- **Deep Slate** `#1A1A1D` - Primary backgrounds
+- **Iron Gray** `#3E424B` - Secondary elements, borders
+- **Parchment White** `#E0D8C8` - Text colour (aged cream)
+- **Ember Gold** `#FF9F1C` - Primary accent, CTAs, glowing elements
+- **Blood Rust** `#8D230F` - Danger, werewolf elements
+
+### Typography
+- **Cinzel Decorative** - Headers and titles (medieval feel)
+- **Montserrat** - Body text (clean, modern readability)
 
 ## 📦 Installation
 
@@ -89,9 +105,9 @@ src/
 │   ├── terms-of-service/  # Terms of service
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Home page
-│   └── globals.css        # Global styles
+│   └── globals.css        # Global styles (Ember & Shadow theme)
 ├── components/
-│   ├── ui/                # shadcn/ui components
+│   ├── ui/                # shadcn/ui components (themed)
 │   ├── werewolf/          # Game-specific components
 │   │   ├── GameScreen.tsx
 │   │   ├── InitialScreen.tsx
@@ -109,6 +125,14 @@ src/
     ├── supabase.ts        # Client-side Supabase
     ├── supabase-server.ts # Server-side Supabase
     └── gameTypes.ts       # TypeScript interfaces
+
+public/
+└── logo/                  # Brand assets
+    ├── Werewolves-Village-t1-logo.png
+    ├── Werewolves-Village-t1-logo-sq.png
+    ├── Werewolves-Village-t1-logo-sq-nobg.png
+    ├── Werewolves-Village-t5.png
+    └── Werewolves-Village-t6.png
 ```
 
 ## 🎲 Game Phases
@@ -136,14 +160,22 @@ npm run build
 npm run lint
 ```
 
-## 🚀 Deployment
+## 🚀 Deployment (Vercel)
 
-The project is configured for deployment on Vercel:
+The project is deployed on **Vercel** with automatic deployments from the `main` branch.
 
-1. Push to GitHub
-2. Connect repository to Vercel
-3. Configure environment variables in Vercel dashboard
-4. Deploy!
+### Deployment Steps:
+
+1. Push to GitHub (`main` branch)
+2. Vercel automatically detects changes and rebuilds
+3. Environment variables are configured in Vercel dashboard:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `ERROR_LOGS_PASSWORD`
+
+### Production URL:
+- **Live:** [https://werewolves-village.vercel.app](https://werewolves-village.vercel.app)
 
 ## 📄 Pages
 
@@ -166,7 +198,7 @@ The project is configured for deployment on Vercel:
 - Supabase RLS policies for data access
 - No sensitive data in client-side code
 
-## 📝 License
+## 📝 Licence
 
 This project is for educational and personal use.
 
@@ -176,8 +208,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📧 Contact
 
-For questions or feedback, visit the [Contact page](https://werewolves-nextjs.vercel.app/contact).
+For questions or feedback, visit the [Contact page](https://werewolves-village.vercel.app/contact).
 
 ---
 
-Made with ❤️ and 🐺
+*Forged in Moonlight* 🌙 Made with ❤️ and 🐺

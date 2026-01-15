@@ -1,8 +1,12 @@
+'use client';
+
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Users, UserPlus, BookOpen } from 'lucide-react';
 import Footer from '@/components/Footer';
 
 interface InitialScreenProps {
@@ -17,7 +21,6 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
 
   const handleCreateGame = () => {
     if (!playerName.trim()) return;
-    // Set player name in gameState before navigating to settings
     gameState.setPlayerName?.(playerName.trim());
     gameState.setCurrentScreen('settings');
   };
@@ -28,98 +31,187 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-grow flex flex-col items-center justify-center px-4 py-12">
-        <div className="text-center">
-          <h1 className="font-cinzel text-6xl md:text-8xl font-bold mb-4 text-red-500 relative">
-            <span className="absolute inset-0 text-white blur-sm opacity-80 transform scale-105">WEREWOLF</span>
-            <span className="absolute inset-0 text-yellow-300 blur-md opacity-40 transform scale-110">WEREWOLF</span>
-            <span className="relative bg-gradient-to-b from-red-400 to-red-600 bg-clip-text text-transparent drop-shadow-2xl">WEREWOLF</span>
-          </h1>
-          <p className="text-gray-300 mb-2 text-lg font-medium">
-            Where pointing fingers is totally normal and trust issues are a feature, not a bug!
-          </p>
-          
-          {/* How to Play Link */}
-          <Link 
-            href="/how-to-play" 
-            className="inline-block text-purple-400 hover:text-purple-300 text-sm mb-8 underline underline-offset-2"
-          >
-            📖 How to Play
-          </Link>
-      
-      <div className="space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center">
-        <Button
-          onClick={() => {
-            setShowJoinForm(false);
-            setShowCreateForm(true);
+    <div className="min-h-screen flex flex-col bg-deep-slate">
+      {/* Background Effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-stone-texture" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-fixed opacity-20"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')"
           }}
-          className="btn-primary w-full md:w-auto bg-red-800 hover:bg-red-900 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all transform hover:scale-105 border-2 border-amber-700 hover:border-amber-600"
-        >
-          Create New Game
-        </Button>
-        <Button
-          onClick={() => {
-            setShowCreateForm(false);
-            setShowJoinForm(true);
-          }}
-          className="btn-secondary w-full md:w-auto bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all transform hover:scale-105 border-2 border-amber-800 hover:border-amber-700"
-        >
-          Join Existing Game
-        </Button>
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-deep-slate/80 via-transparent to-deep-slate/95" />
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-blood/10 via-transparent to-transparent" />
       </div>
-
-      {showJoinForm && (
-        <Card className="mt-8 max-w-sm mx-auto panel">
-          <CardContent className="pt-6 space-y-4">
-            <Input
-              type="text"
-              value={gameCode}
-              onChange={(e) => setGameCode(e.target.value.toUpperCase())}
-              placeholder="Enter Game Code"
-              className="w-full bg-gray-800 border border-gray-600 text-center text-white placeholder-gray-500"
-              maxLength={6}
-            />
-            <Input
-              type="text"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              placeholder="Enter Your Name"
-              className="w-full bg-gray-800 border border-gray-600 text-center text-white placeholder-gray-500"
-              maxLength={20}
-            />
-            <Button
-              onClick={handleJoinGame}
-              disabled={!playerName.trim() || !gameCode.trim()}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
+      
+      {/* Sparkle particles */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
+        <div className="sparkle" style={{ top: '15%', left: '10%', animationDelay: '0s' }}></div>
+        <div className="sparkle" style={{ top: '25%', right: '15%', animationDelay: '0.8s' }}></div>
+        <div className="sparkle" style={{ bottom: '35%', left: '20%', animationDelay: '1.6s' }}></div>
+        <div className="sparkle" style={{ bottom: '20%', right: '10%', animationDelay: '2.4s' }}></div>
+      </div>
+      
+      <main className="relative z-20 flex-grow flex flex-col items-center justify-center px-4 py-12">
+        <div className="text-center max-w-2xl mx-auto">
+          {/* Hero Section with Logo */}
+          <div className="mb-8">
+            {/* Main Logo */}
+            <div className="flex justify-center mb-6">
+              <Image 
+                src="/logo/Werewolves-Village-t1-logo.png" 
+                alt="Werewolves Village" 
+                width={320}
+                height={180}
+                className="h-32 md:h-44 w-auto moon-glow drop-shadow-2xl"
+                priority
+              />
+            </div>
+            
+            {/* Title with chiselled effect */}
+            <h1 className="font-cinzel text-4xl md:text-6xl font-bold mb-3 tracking-wide">
+              <span className="text-chiselled">WEREWOLVES</span>
+              <span className="block text-2xl md:text-3xl mt-1 text-ember fire-flicker">VILLAGE</span>
+            </h1>
+            
+            {/* Medieval divider */}
+            <div className="divider-medieval w-64 mx-auto my-6"></div>
+            
+            {/* Tagline */}
+            <p className="text-parchment/70 text-lg font-medium tracking-wide mb-4">
+              Where trust is a luxury and survival demands deception
+            </p>
+            
+            {/* How to Play Link */}
+            <Link 
+              href="/how-to-play" 
+              className="inline-flex items-center gap-2 text-ember hover:text-ember/80 text-sm mb-8 transition-colors"
             >
-              Enter Lobby
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+              <BookOpen className="w-4 h-4" />
+              How to Play
+            </Link>
+          </div>
 
-      {showCreateForm && (
-        <Card className="mt-8 max-w-sm mx-auto panel">
-          <CardContent className="pt-6 space-y-4">
-            <Input
-              type="text"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              placeholder="Enter Your Name"
-              className="w-full bg-gray-800 border border-gray-600 text-center text-white placeholder-gray-500"
-              maxLength={20}
-            />
-            <Button
-              onClick={handleCreateGame}
-              disabled={!playerName.trim()}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105"
-            >
-              Set Up Game
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+          {/* Main Action Buttons */}
+          {!showCreateForm && !showJoinForm && (
+            <div className="space-y-4 md:space-y-0 md:space-x-6 md:flex md:justify-center mb-8">
+              <Button
+                onClick={() => {
+                  setShowJoinForm(false);
+                  setShowCreateForm(true);
+                }}
+                className="btn-ember w-full md:w-auto py-4 px-10 text-lg rounded font-bold flex items-center justify-center gap-3 group"
+              >
+                <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                Create Game
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowCreateForm(false);
+                  setShowJoinForm(true);
+                }}
+                className="btn-iron w-full md:w-auto py-4 px-10 text-lg rounded font-bold flex items-center justify-center gap-3 group"
+              >
+                <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                Join Game
+              </Button>
+            </div>
+          )}
+
+          {/* Join Game Form */}
+          {showJoinForm && (
+            <Card className="panel-stone max-w-md mx-auto border-iron-gray">
+              <CardContent className="pt-8 pb-6 px-8 space-y-5">
+                <h2 className="font-cinzel text-2xl text-ember mb-4">Join the Hunt</h2>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
+                      Game Code
+                    </label>
+                    <Input
+                      type="text"
+                      value={gameCode}
+                      onChange={(e) => setGameCode(e.target.value.toUpperCase())}
+                      placeholder="Enter 6-digit code"
+                      className="input-iron w-full text-center text-xl font-bold tracking-[0.3em] uppercase"
+                      maxLength={6}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
+                      Your Name
+                    </label>
+                    <Input
+                      type="text"
+                      value={playerName}
+                      onChange={(e) => setPlayerName(e.target.value)}
+                      placeholder="Enter your name"
+                      className="input-iron w-full text-center text-lg"
+                      maxLength={20}
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    onClick={() => setShowJoinForm(false)}
+                    className="btn-iron flex-1 py-3"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleJoinGame}
+                    disabled={!playerName.trim() || !gameCode.trim()}
+                    className="btn-ember flex-1 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Enter Lobby
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Create Game Form */}
+          {showCreateForm && (
+            <Card className="panel-stone max-w-md mx-auto border-iron-gray">
+              <CardContent className="pt-8 pb-6 px-8 space-y-5">
+                <h2 className="font-cinzel text-2xl text-ember mb-4">Begin the Hunt</h2>
+                
+                <div>
+                  <label className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
+                    Your Name
+                  </label>
+                  <Input
+                    type="text"
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value)}
+                    placeholder="Enter your name"
+                    className="input-iron w-full text-center text-lg"
+                    maxLength={20}
+                  />
+                </div>
+                
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    onClick={() => setShowCreateForm(false)}
+                    className="btn-iron flex-1 py-3"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleCreateGame}
+                    disabled={!playerName.trim()}
+                    className="btn-ember flex-1 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Set Up Game
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
       
