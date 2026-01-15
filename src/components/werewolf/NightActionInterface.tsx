@@ -223,17 +223,24 @@ export default function NightActionInterface({
     // For now, we just update local state - the timer will handle phase transition
   };
 
-  // Calculate action progress - ALL alive players must act/end night
-  const totalAlivePlayers = allAlivePlayers.length;
-  
-  // Count unique players who have submitted any night action (action, shield, skip, end_night)
-  const uniqueActedPlayerIds = new Set(nightActions.map((a: any) => a.playerId));
-  const actedCount = uniqueActedPlayerIds.size;
-  
-  // Legacy: roles with special actions (for display purposes)
+  // Calculate action progress - only special role players need to act
   const rolesWithActions = ["werewolf", "seer", "doctor", "bodyguard"];
   const playersWithRoles = allAlivePlayers.filter((p: any) => rolesWithActions.includes(p.role));
   const totalActors = playersWithRoles.length;
+  
+  // Count only actions from players with special roles (kill, protect, investigate actions - NOT shield/end_night)
+  const specialActionTypes = ["kill", "protect", "investigate"];
+  const specialRoleActions = nightActions.filter((a: any) => {
+    // Check if this action is from a player with a special role AND is an actual role action
+    const player = allAlivePlayers.find((p: any) => p.playerId === a.playerId);
+    const hasSpecialRole = player && rolesWithActions.includes(player.role);
+    const isSpecialAction = specialActionTypes.includes(a.actionType);
+    return hasSpecialRole && isSpecialAction;
+  });
+  
+  // Count unique special role players who have performed their role action
+  const uniqueActedPlayerIds = new Set(specialRoleActions.map((a: any) => a.playerId));
+  const actedCount = Math.min(uniqueActedPlayerIds.size, totalActors); // Cap at total to prevent overflow
 
   // Shield Button Component (reusable)
   const ShieldButton = () => {
@@ -396,41 +403,74 @@ export default function NightActionInterface({
     );
   }
 
-  // If player has acted, show waiting screen
+  // If player has acted, show waiting screen WITH CHAT (Bug fix: players must still be able to chat)
   if (hasActed) {
     return (
-      <div className="flex-grow flex flex-col items-center justify-center p-2 sm:p-4 md:p-6">
-        <Card
-          className={`w-full max-w-xl bg-white dark:bg-gray-900/90 border-2 ${roleConfig.borderColor}`}
-        >
-          <CardContent className="p-4 sm:p-6 md:p-8 text-center">
-            <div className="text-4xl sm:text-5xl md:text-6xl mb-4">✅</div>
-            <h3
-              className={`text-xl sm:text-2xl font-cinzel font-bold ${roleConfig.color} mb-2`}
-            >
-              Action Complete
-            </h3>
-            <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base md:text-lg mb-4">
-              You have completed your night action. Wait for others to finish.
-            </p>
-            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-300 dark:border-amber-700">
-              <p className="text-amber-800 dark:text-amber-300 font-semibold text-sm sm:text-base mb-2">
-                Night Progress
+      <div className="flex-grow flex flex-col md:flex-row gap-2 sm:gap-3 md:gap-4 p-2 sm:p-3 md:p-4 overflow-hidden">
+        {/* Chat Panel - Keep chat available after acting */}
+        <div className="flex-1 min-h-[200px] md:min-h-0 max-h-[350px] md:max-h-full flex flex-col gap-2">
+          {/* Werewolf Private Chat - Only visible to werewolves */}
+          {isWerewolf && (
+            <Card className="flex-1 bg-red-900/10 border-2 border-red-600">
+              <CardHeader className="pb-2 sm:pb-3 p-2 sm:p-3 md:p-4">
+                <CardTitle className="font-cinzel text-sm sm:text-base md:text-lg text-red-400 flex items-center gap-2">
+                  🐺 Werewolf Chat
+                  <span className="text-xs font-normal text-red-300">(Private)</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 flex-grow overflow-hidden">
+                <Chat gameState={gameState} channel="werewolf" />
+              </CardContent>
+            </Card>
+          )}
+          
+          {/* Village Chat - Visible to ALL players during night */}
+          <Card className={`flex-1 ${isWerewolf ? 'max-h-[150px]' : ''} bg-indigo-900/10 border-2 border-indigo-600`}>
+            <CardHeader className="pb-1 sm:pb-2 p-2 sm:p-3">
+              <CardTitle className="font-cinzel text-sm sm:text-base md:text-lg text-indigo-400 flex items-center gap-2">
+                🌙 Village Chat
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 flex-grow overflow-hidden">
+              <Chat gameState={gameState} channel="player" />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Action Complete Panel */}
+        <div className="flex-1 max-w-xl">
+          <Card
+            className={`h-full bg-white dark:bg-gray-900/90 border-2 ${roleConfig.borderColor} flex flex-col`}
+          >
+            <CardContent className="p-4 sm:p-6 md:p-8 text-center flex-grow flex flex-col justify-center">
+              <div className="text-4xl sm:text-5xl md:text-6xl mb-4">✅</div>
+              <h3
+                className={`text-xl sm:text-2xl font-cinzel font-bold ${roleConfig.color} mb-2`}
+              >
+                Action Complete
+              </h3>
+              <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base md:text-lg mb-4">
+                You have completed your night action. Wait for others to finish.
               </p>
-              <p className="text-xs sm:text-sm text-amber-700 dark:text-amber-400">
-                {actedCount}/{totalActors} players have acted
-              </p>
-              <div className="w-full bg-amber-200 dark:bg-amber-900 rounded-full h-2 mt-3">
-                <div
-                  className="bg-amber-600 h-2 rounded-full transition-all duration-300"
-                  style={{
-                    width: `${(actedCount / totalActors) * 100}%`,
-                  }}
-                ></div>
+              <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-300 dark:border-amber-700">
+                <p className="text-amber-800 dark:text-amber-300 font-semibold text-sm sm:text-base mb-2">
+                  Night Progress
+                </p>
+                <p className="text-xs sm:text-sm text-amber-700 dark:text-amber-400">
+                  {actedCount}/{totalActors} players have acted
+                </p>
+                <div className="w-full bg-amber-200 dark:bg-amber-900 rounded-full h-2 mt-3">
+                  <div
+                    className="bg-amber-600 h-2 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${(actedCount / totalActors) * 100}%`,
+                    }}
+                  ></div>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }

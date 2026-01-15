@@ -28,6 +28,15 @@ export async function POST(request: Request) {
       )
     }
 
+    // If already in voting phase, return success (race condition fix)
+    if (game.current_phase === 'voting') {
+      return NextResponse.json({
+        success: true,
+        phase: 'voting',
+        message: 'Voting already in progress'
+      })
+    }
+
     if (game.current_phase !== 'day') {
       return NextResponse.json(
         { error: 'Voting can only be started during the day phase' },

@@ -1001,7 +1001,7 @@ export function useGameState() {
     if (!gameState || !playerId) return;
 
     try {
-      await callEdgeFunctionWithRetry(
+      const result = await callEdgeFunctionWithRetry(
         `/api/start-voting`,
         {
           gameCode: gameState.game.gameCode,
@@ -1010,11 +1010,30 @@ export function useGameState() {
         "start-voting"
       );
 
-      toast({
-        title: "Voting Started",
-        description: "The voting phase has begun!",
-      });
+      // Show appropriate toast based on whether voting was already started
+      if (result?.message === 'Voting already in progress') {
+        toast({
+          title: "Voting Started",
+          description: "The voting phase has begun!",
+        });
+      } else {
+        toast({
+          title: "Voting Started",
+          description: "The voting phase has begun!",
+        });
+      }
+      
+      // Refresh game state to get the latest phase
+      await fetchGameState(gameState.game.gameCode);
     } catch (error: any) {
+      // Don't show error if it's just a phase timing issue - refresh instead
+      const errorMsg = error.message || "";
+      if (errorMsg.includes("day phase") || errorMsg.includes("voting")) {
+        // Phase likely already changed, just refresh
+        await fetchGameState(gameState.game.gameCode);
+        return;
+      }
+      
       logError(error.message || "Failed to start voting", {
         details: error.stack || JSON.stringify(error),
         source: "edge-function",
@@ -1029,7 +1048,7 @@ export function useGameState() {
         variant: "destructive",
       });
     }
-  }, [gameState, playerId, toast, logError]);
+  }, [gameState, playerId, toast, logError, fetchGameState]);
 
   // Activate shield for the current night
   const useShield = useCallback(async () => {
