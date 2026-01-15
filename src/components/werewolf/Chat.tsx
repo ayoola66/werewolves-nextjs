@@ -17,18 +17,18 @@ const MIN_WORDS_REQUIRED = 3;
 
 // Get grace period based on night count (more lenient early game)
 function getGracePeriodMs(nightCount: number): number {
-  if (nightCount <= 1) return 20000; // Night 1: 20 seconds grace
-  if (nightCount <= 2) return 15000; // Night 2: 15 seconds grace
-  if (nightCount <= 3) return 15000; // Night 3: 15 seconds grace
-  return 10000; // Night 4+: 10 seconds grace
+  if (nightCount <= 1) return 20000; // Night 1: 20s grace (35s total)
+  if (nightCount <= 2) return 15000; // Night 2: 15s grace (25s total)
+  if (nightCount <= 3) return 10000; // Night 3: 10s grace (15s total)
+  return 5000; // Night 4+: 5s grace (10s total)
 }
 
 // Get typing window based on night count
 function getTypingIntervalMs(nightCount: number): number {
-  if (nightCount <= 1) return 15000; // Night 1: 15 seconds to type
-  if (nightCount <= 2) return 12000; // Night 2: 12 seconds to type
-  if (nightCount <= 3) return 10000; // Night 3: 10 seconds to type
-  return 10000; // Night 4+: 10 seconds to type
+  if (nightCount <= 1) return 15000; // Night 1: 15s typing (35s total)
+  if (nightCount <= 2) return 10000; // Night 2: 10s typing (25s total)
+  if (nightCount <= 3) return 5000;  // Night 3: 5s typing (15s total)
+  return 5000; // Night 4+: 5s typing (10s total)
 }
 
 // Warning threshold is always half the typing interval
