@@ -60,11 +60,11 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
             {/* Main Logo */}
             <div className="flex justify-center mb-6">
               <Image 
-                src="/logo/Werewolves-Village-t1-logo.png" 
+                src="/logo/Werewolves-Village-t1-logo-sq-nobg-main.png" 
                 alt="Werewolves Village" 
                 width={320}
-                height={180}
-                className="h-32 md:h-44 w-auto moon-glow drop-shadow-2xl"
+                height={320}
+                className="h-36 md:h-48 w-auto moon-glow drop-shadow-2xl"
                 priority
               />
             </div>

@@ -92,7 +92,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <Image 
-              src="/logo/Werewolves-Village-t1-logo-sq-nobg.png"
+              src="/logo/Werewolves-Village-t1-logo-sq-nobg-main.png"
               alt="Werewolves Village"
               width={40}
               height={40}

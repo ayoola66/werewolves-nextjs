@@ -107,7 +107,7 @@ export default function GameSettings({ gameState }: GameSettingsProps) {
         {/* Small logo */}
         <div className="flex justify-center mb-4">
           <Image 
-            src="/logo/Werewolves-Village-t1-logo-sq-nobg.png" 
+            src="/logo/Werewolves-Village-t1-logo-sq-nobg-main.png" 
             alt="Werewolves Village" 
             width={70}
             height={70}

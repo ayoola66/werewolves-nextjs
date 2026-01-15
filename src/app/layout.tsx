@@ -4,29 +4,31 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const montserrat = Montserrat({ 
-  subsets: ["latin"], 
+const montserrat = Montserrat({
+  subsets: ["latin"],
   variable: "--font-montserrat",
-  weight: ["400", "500", "600", "700"]
+  weight: ["400", "500", "600", "700"],
 });
 
-const cinzel = Cinzel_Decorative({ 
-  subsets: ["latin"], 
+const cinzel = Cinzel_Decorative({
+  subsets: ["latin"],
   variable: "--font-cinzel",
-  weight: ["400", "700", "900"]
+  weight: ["400", "700", "900"],
 });
 
 export const metadata: Metadata = {
   title: "Werewolves Village - Social Deduction Game",
-  description: "Werewolves Village - A thrilling multiplayer social deduction game of strategy, deception, and survival. Forged in Moonlight.",
+  description:
+    "Werewolves Village - A thrilling multiplayer social deduction game of strategy, deception, and survival. Forged in Moonlight.",
   icons: {
-    icon: "/logo/Werewolves-Village-t1-logo-sq-nobg.png",
-    apple: "/logo/Werewolves-Village-t1-logo-sq.png",
+    icon: "/logo/Werewolves-Village-t1-logo-sq-nobg-main.png",
+    apple: "/logo/Werewolves-Village-t1-logo-sq-nobg-main.png",
   },
   openGraph: {
     title: "Werewolves Village",
-    description: "A thrilling multiplayer social deduction game. Forged in Moonlight.",
-    images: ["/logo/Werewolves-Village-t1-logo.png"],
+    description:
+      "A thrilling multiplayer social deduction game. Forged in Moonlight.",
+    images: ["/logo/Werewolves-Village-t1-logo-sq-nobg-main.png"],
     type: "website",
   },
   themeColor: "#1A1A1D",
@@ -39,7 +41,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${montserrat.variable} ${cinzel.variable} antialiased bg-deep-slate text-parchment`}>
+      <body
+        className={`${montserrat.variable} ${cinzel.variable} antialiased bg-deep-slate text-parchment`}
+      >
         {children}
         <Toaster />
         <SpeedInsights />
