@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { Users, UserPlus, BookOpen } from 'lucide-react';
-import Footer from '@/components/Footer';
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Users, UserPlus, BookOpen } from "lucide-react";
+import Footer from "@/components/Footer";
 
 interface InitialScreenProps {
   gameState: any;
@@ -16,13 +16,13 @@ interface InitialScreenProps {
 export default function InitialScreen({ gameState }: InitialScreenProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showJoinForm, setShowJoinForm] = useState(false);
-  const [playerName, setPlayerName] = useState('');
-  const [gameCode, setGameCode] = useState('');
+  const [playerName, setPlayerName] = useState("");
+  const [gameCode, setGameCode] = useState("");
 
   const handleCreateGame = () => {
     if (!playerName.trim()) return;
     gameState.setPlayerName?.(playerName.trim());
-    gameState.setCurrentScreen('settings');
+    gameState.setCurrentScreen("settings");
   };
 
   const handleJoinGame = () => {
@@ -35,57 +35,71 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-stone-texture" />
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-fixed"
           style={{
-            backgroundImage: "url('/logo/Werewolves-Village-background.png')"
+            backgroundImage: "url('/logo/Werewolves-Village-background.png')",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-deep-slate/60 via-deep-slate/40 to-deep-slate/90" />
         <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-blood/10 via-transparent to-transparent" />
       </div>
-      
+
       {/* Sparkle particles */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
-        <div className="sparkle" style={{ top: '15%', left: '10%', animationDelay: '0s' }}></div>
-        <div className="sparkle" style={{ top: '25%', right: '15%', animationDelay: '0.8s' }}></div>
-        <div className="sparkle" style={{ bottom: '35%', left: '20%', animationDelay: '1.6s' }}></div>
-        <div className="sparkle" style={{ bottom: '20%', right: '10%', animationDelay: '2.4s' }}></div>
+        <div
+          className="sparkle"
+          style={{ top: "15%", left: "10%", animationDelay: "0s" }}
+        ></div>
+        <div
+          className="sparkle"
+          style={{ top: "25%", right: "15%", animationDelay: "0.8s" }}
+        ></div>
+        <div
+          className="sparkle"
+          style={{ bottom: "35%", left: "20%", animationDelay: "1.6s" }}
+        ></div>
+        <div
+          className="sparkle"
+          style={{ bottom: "20%", right: "10%", animationDelay: "2.4s" }}
+        ></div>
       </div>
-      
+
       <main className="relative z-20 flex-grow flex flex-col items-center justify-center px-4 py-12">
         <div className="text-center max-w-2xl mx-auto">
           {/* Hero Section with Logo */}
           <div className="mb-8">
             {/* Main Logo */}
             <div className="flex justify-center mb-6">
-              <Image 
-                src="/logo/Werewolves-Village-t1-logo-sq-nobg-main.png" 
-                alt="Werewolves Village" 
+              <Image
+                src="/logo/Werewolves-Village-t1-logo-sq-nobg-main.png"
+                alt="Werewolves Village"
                 width={320}
                 height={320}
                 className="h-36 md:h-48 w-auto moon-glow drop-shadow-2xl"
                 priority
               />
             </div>
-            
+
             {/* Title with chiselled effect */}
             <h1 className="font-cinzel text-4xl md:text-6xl font-bold mb-3 tracking-wide">
               <span className="text-chiselled">WEREWOLVES</span>
-              <span className="block text-2xl md:text-3xl mt-1 text-ember fire-flicker">VILLAGE</span>
+              <span className="block text-2xl md:text-3xl mt-1 text-ember fire-flicker">
+                VILLAGE
+              </span>
             </h1>
-            
+
             {/* Medieval divider */}
             <div className="divider-medieval w-64 mx-auto my-6"></div>
-            
+
             {/* Tagline */}
             <p className="text-parchment/70 text-lg font-medium tracking-wide mb-4">
               Where trust is a luxury and survival demands deception
             </p>
-            
+
             {/* How to Play Link */}
-            <Link 
-              href="/how-to-play" 
+            <Link
+              href="/how-to-play"
               className="inline-flex items-center gap-2 text-ember hover:text-ember/80 text-sm mb-8 transition-colors"
             >
               <BookOpen className="w-4 h-4" />
@@ -123,8 +137,10 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
           {showJoinForm && (
             <Card className="panel-stone max-w-md mx-auto border-iron-gray">
               <CardContent className="pt-8 pb-6 px-8 space-y-5">
-                <h2 className="font-cinzel text-2xl text-ember mb-4">Join the Hunt</h2>
-                
+                <h2 className="font-cinzel text-2xl text-ember mb-4">
+                  Join the Hunt
+                </h2>
+
                 <div className="space-y-4">
                   <div>
                     <label className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
@@ -133,13 +149,15 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
                     <Input
                       type="text"
                       value={gameCode}
-                      onChange={(e) => setGameCode(e.target.value.toUpperCase())}
+                      onChange={(e) =>
+                        setGameCode(e.target.value.toUpperCase())
+                      }
                       placeholder="Enter 6-digit code"
                       className="input-iron w-full text-center text-xl font-bold tracking-[0.3em] uppercase"
                       maxLength={6}
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
                       Your Name
@@ -154,7 +172,7 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex gap-3 pt-2">
                   <Button
                     onClick={() => setShowJoinForm(false)}
@@ -178,8 +196,10 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
           {showCreateForm && (
             <Card className="panel-stone max-w-md mx-auto border-iron-gray">
               <CardContent className="pt-8 pb-6 px-8 space-y-5">
-                <h2 className="font-cinzel text-2xl text-ember mb-4">Begin the Hunt</h2>
-                
+                <h2 className="font-cinzel text-2xl text-ember mb-4">
+                  Begin the Hunt
+                </h2>
+
                 <div>
                   <label className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
                     Your Name
@@ -193,7 +213,7 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
                     maxLength={20}
                   />
                 </div>
-                
+
                 <div className="flex gap-3 pt-2">
                   <Button
                     onClick={() => setShowCreateForm(false)}
@@ -214,7 +234,7 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
           )}
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
