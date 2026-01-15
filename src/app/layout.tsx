@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cinzel, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${cinzel.variable} antialiased`}>
         {children}
         <Toaster />
+        <SpeedInsights />
       </body>
     </html>
   );
