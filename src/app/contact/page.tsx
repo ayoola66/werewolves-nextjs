@@ -20,20 +20,21 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus('sending');
     
-    // For now, we'll simulate sending - in production, connect to an email service
-    // like SendGrid, Resend, or a Supabase function
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
       
-      // In production, you would send the email here:
-      // await fetch('/api/contact', {
-      //   method: 'POST',
-      //   body: JSON.stringify(formData),
-      // });
+      const data = await response.json();
       
-      setStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      if (data.success) {
+        setStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setStatus('error');
+      }
     } catch {
       setStatus('error');
     }

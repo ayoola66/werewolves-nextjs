@@ -75,6 +75,11 @@ export default function Footer() {
                   Contact Us
                 </Link>
               </li>
+              <li>
+                <Link href="/error-logs" className="text-gray-500 hover:text-gray-400 transition-colors text-xs">
+                  Error Logs
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

@@ -3,9 +3,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { AlertCircle } from 'lucide-react';
-import { useErrorLog } from '@/hooks/useErrorLog';
 import Footer from '@/components/Footer';
 
 interface InitialScreenProps {
@@ -17,8 +14,6 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
   const [showJoinForm, setShowJoinForm] = useState(false);
   const [playerName, setPlayerName] = useState('');
   const [gameCode, setGameCode] = useState('');
-  const { getNewErrorsCount } = useErrorLog();
-  const newErrorsCount = getNewErrorsCount();
 
   const handleCreateGame = () => {
     if (!playerName.trim()) return;
@@ -52,25 +47,6 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
           >
             📖 How to Play
           </Link>
-          
-          {/* Error Logs Link - only visible for developers */}
-          <div className="mb-6 flex justify-center">
-            <Link href="/error-logs">
-              <Button
-                variant="outline"
-                size="sm"
-                className="bg-black/40 border-gray-700 text-gray-500 hover:bg-gray-800 hover:text-gray-400 text-xs"
-              >
-                <AlertCircle className="w-3 h-3 mr-1" />
-                Error Logs
-                {newErrorsCount > 0 && (
-                  <Badge variant="destructive" className="ml-2 text-xs">
-                    {newErrorsCount}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
-          </div>
       
       <div className="space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center">
         <Button
