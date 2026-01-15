@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef } from "react";
 import PlayerSidebar from "./PlayerSidebar";
 import Chat from "./Chat";
@@ -36,7 +34,7 @@ export default function GameScreen({ gameState }: GameScreenProps) {
   const [showEliminatedOverlay, setShowEliminatedOverlay] = useState(false);
   const wasAliveRef = useRef<boolean | null>(null);
   const { setTheme } = useTheme();
-  
+
   // gameState prop is the hook return value, so access gameState.gameState
   const game = gameState?.gameState;
 
@@ -118,7 +116,11 @@ export default function GameScreen({ gameState }: GameScreenProps) {
         setTimer(`${minutes}:${seconds.toString().padStart(2, "0")}`);
       } else {
         // Fallback to phase default or phaseTimer
-        const phaseTimer = game.game?.phaseTimer || game.phaseTimer || PHASE_DEFAULTS[currentPhase] || 120;
+        const phaseTimer =
+          game.game?.phaseTimer ||
+          game.phaseTimer ||
+          PHASE_DEFAULTS[currentPhase] ||
+          120;
         const minutes = Math.floor(phaseTimer / 60);
         const seconds = phaseTimer % 60;
         setTimer(`${minutes}:${seconds.toString().padStart(2, "0")}`);
@@ -200,7 +202,9 @@ export default function GameScreen({ gameState }: GameScreenProps) {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
           <p>Loading game state...</p>
-          <p className="text-sm text-gray-400 mt-2">If this persists, check console for errors</p>
+          <p className="text-sm text-gray-400 mt-2">
+            If this persists, check console for errors
+          </p>
         </div>
       </div>
     );
@@ -294,9 +298,9 @@ export default function GameScreen({ gameState }: GameScreenProps) {
         <GameOverOverlay gameState={gameState} />
       )}
       {showEliminatedOverlay && (
-        <EliminatedOverlay 
-          gameState={gameState} 
-          onContinueWatching={() => setShowEliminatedOverlay(false)} 
+        <EliminatedOverlay
+          gameState={gameState}
+          onContinueWatching={() => setShowEliminatedOverlay(false)}
         />
       )}
 
@@ -423,10 +427,12 @@ export default function GameScreen({ gameState }: GameScreenProps) {
                         Discussion Time
                       </h3>
                       <p className="text-amber-800 dark:text-amber-200 text-lg mb-4">
-                        Chat is disabled during the day. Discuss with other players verbally to find the werewolves!
+                        Chat is disabled during the day. Discuss with other
+                        players verbally to find the werewolves!
                       </p>
                       <div className="text-sm text-amber-600 dark:text-amber-400 italic">
-                        "The wise villagers speak face to face, for the written word may be intercepted..."
+                        "The wise villagers speak face to face, for the written
+                        word may be intercepted..."
                       </div>
                     </div>
                   </div>

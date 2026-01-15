@@ -8,7 +8,8 @@ const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel" });
 
 export const metadata: Metadata = {
   title: "Werewolves - Multiplayer Social Deduction Game",
-  description: "A real-time multiplayer werewolf game. Deceive, deduce, and survive!",
+  description:
+    "A real-time multiplayer werewolf game. Deceive, deduce, and survive!",
 };
 
 export default function RootLayout({
