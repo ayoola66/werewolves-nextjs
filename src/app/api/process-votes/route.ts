@@ -29,6 +29,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Game not found" }, { status: 404 });
     }
 
+    // RACE CONDITION FIX: Check if phase was changed very recently
+    if (game.last_phase_change) {
+      const lastChange = new Date(game.last_phase_change).getTime()
+      const now = Date.now()
+      const timeSinceLastChange = now - lastChange
+      
+      if (timeSinceLastChange < 3000) {
+        console.log(`Phase transition skipped - too recent (${timeSinceLastChange}ms ago)`)
+        return NextResponse.json({ 
+          success: true, 
+          skipped: true,
+          phase: game.current_phase,
+          reason: 'Phase transition already in progress'
+        })
+      }
+    }
+
     if (game.current_phase !== "voting") {
       return NextResponse.json(
         { error: "Not in voting phase" },

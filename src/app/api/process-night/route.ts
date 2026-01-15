@@ -28,6 +28,25 @@ export async function POST(request: Request) {
       )
     }
 
+    // RACE CONDITION FIX: Check if phase was changed very recently (within 3 seconds)
+    // This prevents multiple clients from triggering the same transition
+    if (game.last_phase_change) {
+      const lastChange = new Date(game.last_phase_change).getTime()
+      const now = Date.now()
+      const timeSinceLastChange = now - lastChange
+      
+      // If phase changed less than 3 seconds ago, skip this request
+      if (timeSinceLastChange < 3000) {
+        console.log(`Phase transition skipped - too recent (${timeSinceLastChange}ms ago)`)
+        return NextResponse.json({ 
+          success: true, 
+          skipped: true,
+          phase: game.current_phase,
+          reason: 'Phase transition already in progress'
+        })
+      }
+    }
+
     // Allow processing in night or role_reveal phase
     if (game.current_phase !== 'night' && game.current_phase !== 'role_reveal') {
       return NextResponse.json(
@@ -41,7 +60,8 @@ export async function POST(request: Request) {
       const phaseTimer = PHASE_TIMERS.night
       const phaseEndTime = new Date(Date.now() + phaseTimer * 1000)
       
-      await supabase
+      // Use atomic update with condition check to prevent race condition
+      const { data: updated, error: updateError } = await supabase
         .from('games')
         .update({ 
           current_phase: 'night',
@@ -51,12 +71,25 @@ export async function POST(request: Request) {
           last_phase_change: new Date().toISOString()
         })
         .eq('id', game.id)
+        .eq('current_phase', 'role_reveal') // Only update if still in role_reveal
+        .select()
+        .single()
+
+      // If no rows updated, another client already transitioned
+      if (updateError || !updated) {
+        console.log('Phase transition already happened by another client')
+        return NextResponse.json({ 
+          success: true, 
+          skipped: true,
+          reason: 'Phase already transitioned'
+        })
+      }
 
       await supabase
         .from('chat_messages')
         .insert({
           game_id: game.id,
-          message: '🌙 Night falls... Werewolves, choose your target.',
+          message: '🌙 Night 1 falls... Werewolves, choose your target.',
           type: 'system'
         })
 

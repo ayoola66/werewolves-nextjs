@@ -420,8 +420,20 @@ export function useGameState() {
   }, [fetchGameState]);
 
   // Phase timer checking - automatically transition phases when timer expires
+  // CRITICAL: Only the HOST triggers phase transitions to prevent race conditions
   useEffect(() => {
     if (!gameState?.game?.gameCode || currentScreen !== "game") return;
+
+    // Get current player to check if they're the host
+    const currentPlayer = Array.isArray(gameState?.players)
+      ? gameState.players.find((p) => p.playerId === playerId)
+      : null;
+    
+    // RACE CONDITION FIX: Only the host triggers automatic phase transitions
+    // This prevents multiple clients from calling the same transition API
+    if (!currentPlayer?.isHost) {
+      return; // Non-host players just wait for state updates via Realtime
+    }
 
     const currentPhase =
       gameState.game?.currentPhase || gameState.game?.phase || gameState.phase;
@@ -602,8 +614,11 @@ export function useGameState() {
     gameState?.game?.gameCode,
     gameState?.game?.currentPhase,
     gameState?.game?.phaseEndTime,
+    gameState?.players,
     currentScreen,
+    playerId,
     logError,
+    fetchGameState,
   ]);
 
   const createGame = useCallback(

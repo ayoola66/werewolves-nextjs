@@ -89,70 +89,86 @@ export default function ErrorLogs() {
     <div className="min-h-screen bg-gradient-to-b from-purple-900/40 via-red-900/50 to-black/70 p-4">
       <div className="max-w-7xl mx-auto">
         <Card className="bg-black/60 border-purple-500/50 text-white">
-          <CardHeader>
-            <div className="flex items-center justify-between">
+          <CardHeader className="pb-4">
+            {/* Header with title and buttons */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <CardTitle className="text-3xl mb-2">Error Logs</CardTitle>
-                <CardDescription className="text-gray-300">
-                  Track and manage errors encountered during testing and gameplay
+                <CardTitle className="text-2xl sm:text-3xl font-bold">🔍 Error Logs</CardTitle>
+                <CardDescription className="text-gray-400 mt-1">
+                  Track and manage errors from testing and gameplay
                 </CardDescription>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Link href="/">
                   <Button
+                    size="sm"
                     variant="outline"
-                    className="border-purple-500/50 hover:bg-purple-500/20"
+                    className="border-purple-500/50 hover:bg-purple-500/20 text-white"
                   >
-                    <Home className="w-4 h-4 mr-2" />
+                    <Home className="w-4 h-4 mr-1" />
                     Home
                   </Button>
                 </Link>
                 <Button
+                  size="sm"
                   variant="outline"
                   onClick={exportErrors}
-                  className="border-purple-500/50 hover:bg-purple-500/20"
+                  className="border-blue-500/50 hover:bg-blue-500/20 text-white"
                 >
-                  <Download className="w-4 h-4 mr-2" />
+                  <Download className="w-4 h-4 mr-1" />
                   Export
                 </Button>
                 {errors.length > 0 && (
                   <Button
+                    size="sm"
                     variant="destructive"
                     onClick={clearAllErrors}
                     className="bg-red-600 hover:bg-red-700"
                   >
-                    <Trash2 className="w-4 h-4 mr-2" />
+                    <Trash2 className="w-4 h-4 mr-1" />
                     Clear Old
                   </Button>
                 )}
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <CardContent className="pt-0">
+            {/* Stats - 2x2 grid on mobile, 4 columns on desktop */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
               <Card className="bg-red-900/30 border-red-500/50">
-                <CardContent className="pt-6">
-                  <div className="text-2xl font-bold text-red-400">{newErrorsCount}</div>
-                  <p className="text-sm text-gray-300">New Errors</p>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="text-3xl">🔴</div>
+                  <div>
+                    <div className="text-2xl font-bold text-red-400">{newErrorsCount}</div>
+                    <p className="text-xs text-gray-400">New</p>
+                  </div>
                 </CardContent>
               </Card>
               <Card className="bg-yellow-900/30 border-yellow-500/50">
-                <CardContent className="pt-6">
-                  <div className="text-2xl font-bold text-yellow-400">{investigatingErrors.length}</div>
-                  <p className="text-sm text-gray-300">Investigating</p>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="text-3xl">🔍</div>
+                  <div>
+                    <div className="text-2xl font-bold text-yellow-400">{investigatingErrors.length}</div>
+                    <p className="text-xs text-gray-400">Investigating</p>
+                  </div>
                 </CardContent>
               </Card>
               <Card className="bg-green-900/30 border-green-500/50">
-                <CardContent className="pt-6">
-                  <div className="text-2xl font-bold text-green-400">{resolvedErrors.length}</div>
-                  <p className="text-sm text-gray-300">Resolved</p>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="text-3xl">✅</div>
+                  <div>
+                    <div className="text-2xl font-bold text-green-400">{resolvedErrors.length}</div>
+                    <p className="text-xs text-gray-400">Resolved</p>
+                  </div>
                 </CardContent>
               </Card>
               <Card className="bg-gray-900/30 border-gray-500/50">
-                <CardContent className="pt-6">
-                  <div className="text-2xl font-bold text-gray-400">{errors.length}</div>
-                  <p className="text-sm text-gray-300">Total Errors</p>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="text-3xl">📊</div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-300">{errors.length}</div>
+                    <p className="text-xs text-gray-400">Total</p>
+                  </div>
                 </CardContent>
               </Card>
             </div>
