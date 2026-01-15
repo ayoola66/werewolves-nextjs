@@ -13,9 +13,10 @@ interface ChatProps {
 }
 
 // Anti-AFK typing rule constants
-const TYPING_INTERVAL_MS = 5000; // 5 seconds
+const GRACE_PERIOD_MS = 5000; // 5 seconds grace period at start of night
+const TYPING_INTERVAL_MS = 10000; // 10 seconds to type after grace period
 const MIN_WORDS_REQUIRED = 3;
-const WARNING_THRESHOLD_MS = 2000; // Show warning at 2 seconds left
+const WARNING_THRESHOLD_MS = 5000; // Show warning at 5 seconds left (halfway)
 
 export default function Chat({ gameState, channel = "player" }: ChatProps) {
   const [message, setMessage] = useState("");
@@ -61,26 +62,56 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
     }
   }, [gameState]);
 
-  // Reset word counter every 5 seconds and check for violations
+  // State for grace period
+  const [inGracePeriod, setInGracePeriod] = useState(true);
+  const [graceTimeRemaining, setGraceTimeRemaining] = useState(GRACE_PERIOD_MS / 1000);
+  const gracePeriodStartRef = useRef<number>(0);
+
+  // Get player role to exempt werewolves
+  const playerRole = gameState?.getPlayerRole?.();
+  const isPlayerWerewolf = playerRole === "werewolf" || playerRole === "minion";
+
+  // Reset word counter and check for violations - EXEMPT WEREWOLVES
   useEffect(() => {
-    // Only apply anti-AFK rule during night phase for alive players chatting in village channel
-    if (!isNightPhase || !isAlive || channel !== "player") {
+    // CRITICAL: Werewolves are EXEMPT from lightning strike - they have their own coordination
+    // Only apply anti-AFK rule during night phase for alive NON-WEREWOLF players
+    if (!isNightPhase || !isAlive || channel !== "player" || isPlayerWerewolf) {
       // Clear any existing interval
       if (typingIntervalRef.current) {
         clearInterval(typingIntervalRef.current);
         typingIntervalRef.current = null;
       }
       setShowWarning(false);
+      setInGracePeriod(true);
       return;
     }
 
-    // Start the typing check interval
-    lastResetTimeRef.current = Date.now();
+    // Start with grace period
+    gracePeriodStartRef.current = Date.now();
+    setInGracePeriod(true);
+    setGraceTimeRemaining(GRACE_PERIOD_MS / 1000);
     setWordsSentInWindow(0);
     setTimeRemaining(TYPING_INTERVAL_MS / 1000);
 
     typingIntervalRef.current = setInterval(() => {
       const now = Date.now();
+      
+      // Check if still in grace period
+      const graceElapsed = now - gracePeriodStartRef.current;
+      if (graceElapsed < GRACE_PERIOD_MS) {
+        // Still in grace period
+        setInGracePeriod(true);
+        setGraceTimeRemaining(Math.ceil((GRACE_PERIOD_MS - graceElapsed) / 1000));
+        return;
+      }
+      
+      // Grace period over, now track typing
+      if (inGracePeriod) {
+        setInGracePeriod(false);
+        lastResetTimeRef.current = now; // Start the typing window now
+        setWordsSentInWindow(0);
+      }
+      
       const elapsed = now - lastResetTimeRef.current;
       const remaining = Math.max(0, TYPING_INTERVAL_MS - elapsed);
       
@@ -112,7 +143,7 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
         typingIntervalRef.current = null;
       }
     };
-  }, [isNightPhase, isAlive, channel, wordsSentInWindow, triggerLightningStrike]);
+  }, [isNightPhase, isAlive, channel, isPlayerWerewolf, wordsSentInWindow, triggerLightningStrike, inGracePeriod]);
 
   useEffect(() => {
     const chatMessages = gameState?.gameState?.chatMessages;
@@ -161,10 +192,10 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
     }
   };
 
-  // Use already-declared variables from above (lines 34-39)
+  // Use already-declared variables from above
   const canChat = gameState.canChat ? gameState.canChat() : (currentPlayer?.isAlive || false);
-  const playerRole = gameState.getPlayerRole();
-  const isWerewolf = playerRole === "werewolf" || playerRole === "minion";
+  // playerRole and isPlayerWerewolf already declared above for lightning strike exemption
+  const isWerewolf = isPlayerWerewolf;
 
   // Determine chat label based on phase and channel
   let chatLabel = "Village Chat";
@@ -186,8 +217,8 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
     chatSubtitle = "Chat disabled during voting";
   }
 
-  // Show anti-AFK warning during night phase
-  const showTypingRequirement = isNightPhase && isAlive && channel === "player";
+  // Show anti-AFK warning during night phase - but NOT for werewolves
+  const showTypingRequirement = isNightPhase && isAlive && channel === "player" && !isPlayerWerewolf;
   const wordsNeeded = MIN_WORDS_REQUIRED - wordsSentInWindow;
 
   return (
@@ -210,45 +241,66 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
           )}
         </CardTitle>
         
-        {/* Anti-AFK Typing Requirement Warning */}
+        {/* Anti-AFK Typing Requirement Warning - Villagers only */}
         {showTypingRequirement && (
-          <div className={`mt-2 p-2 rounded-lg transition-all ${
-            showWarning 
-              ? 'bg-red-600 animate-pulse' 
-              : wordsNeeded <= 0 
-                ? 'bg-green-600/80' 
-                : 'bg-amber-600/80'
+          <div className={`mt-2 p-3 rounded-lg transition-all ${
+            inGracePeriod
+              ? 'bg-blue-600/80'
+              : showWarning 
+                ? 'bg-red-600 animate-pulse' 
+                : wordsNeeded <= 0 
+                  ? 'bg-green-600/80' 
+                  : 'bg-amber-600/80'
           }`}>
-            <div className="flex items-center justify-between text-white text-xs">
-              <div className="flex items-center gap-1">
-                {showWarning ? (
+            <div className="flex items-center justify-between text-white text-sm">
+              <div className="flex items-center gap-2">
+                {inGracePeriod ? (
                   <>
-                    <Zap className="w-4 h-4 animate-bounce" />
-                    <span className="font-bold">⚡ LIGHTNING WARNING!</span>
+                    <span className="text-lg">🛡️</span>
+                    <span className="font-bold">Grace Period</span>
+                  </>
+                ) : showWarning ? (
+                  <>
+                    <Zap className="w-5 h-5 animate-bounce" />
+                    <span className="font-bold">⚡ LIGHTNING IMMINENT!</span>
                   </>
                 ) : wordsNeeded <= 0 ? (
                   <>
-                    <span>✓ Safe!</span>
+                    <span className="text-lg">✅</span>
+                    <span className="font-bold">Safe!</span>
                   </>
                 ) : (
                   <>
-                    <AlertTriangle className="w-3 h-3" />
-                    <span>Grand Wizard's Law</span>
+                    <AlertTriangle className="w-4 h-4" />
+                    <span className="font-bold">Grand Wizard's Law</span>
                   </>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-mono font-bold">
-                  {wordsNeeded > 0 ? `${wordsNeeded} words needed` : 'OK'}
-                </span>
-                <span className="font-mono bg-black/30 px-2 py-0.5 rounded">
-                  {timeRemaining}s
-                </span>
+                {inGracePeriod ? (
+                  <span className="font-mono bg-black/30 px-3 py-1 rounded text-lg font-bold">
+                    {graceTimeRemaining}s
+                  </span>
+                ) : (
+                  <>
+                    <span className="font-mono font-bold">
+                      {wordsNeeded > 0 ? `${wordsNeeded} words` : '✓'}
+                    </span>
+                    <span className="font-mono bg-black/30 px-2 py-1 rounded font-bold">
+                      {timeRemaining}s
+                    </span>
+                  </>
+                )}
               </div>
             </div>
-            {showWarning && (
-              <div className="text-white text-xs mt-1 text-center font-bold">
-                TYPE NOW or face the Grand Wizard's wrath! ⚡
+            {inGracePeriod && (
+              <div className="text-white text-xs mt-2 text-center">
+                Prepare to type! You must send {MIN_WORDS_REQUIRED}+ words every {TYPING_INTERVAL_MS/1000}s to avoid the Grand Wizard's lightning!
+              </div>
+            )}
+            {showWarning && !inGracePeriod && (
+              <div className="text-white text-sm mt-2 text-center font-bold animate-pulse">
+                ⚡ TYPE {wordsNeeded} WORDS NOW or be struck by LIGHTNING! ⚡
               </div>
             )}
           </div>

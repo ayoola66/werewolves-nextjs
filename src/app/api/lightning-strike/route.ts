@@ -50,6 +50,15 @@ export async function POST(request: Request) {
       )
     }
 
+    // CRITICAL: Werewolves are EXEMPT from lightning strike
+    // They have their own coordination to do during night phase
+    if (player.role === 'werewolf' || player.role === 'minion') {
+      return NextResponse.json(
+        { error: 'Werewolves are exempt from the Grand Wizard\'s law' },
+        { status: 400 }
+      )
+    }
+
     // Kill the player - no protection can save from lightning!
     await supabase
       .from('players')
