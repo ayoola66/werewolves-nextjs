@@ -18,10 +18,14 @@ export function generateGameCode(): string {
 }
 
 // Shuffle array using Fisher-Yates algorithm
+// Use crypto for true randomness in serverless environment
+import { randomInt } from 'crypto';
+
 export function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    // Use cryptographically secure random instead of Math.random()
+    const j = randomInt(0, i + 1);
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
   }
   return shuffled

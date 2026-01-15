@@ -12,11 +12,29 @@ interface ChatProps {
   channel?: string; // "player" | "werewolf"
 }
 
-// Anti-AFK typing rule constants
-const GRACE_PERIOD_MS = 5000; // 5 seconds grace period at start of night
-const TYPING_INTERVAL_MS = 10000; // 10 seconds to type after grace period
+// Anti-AFK typing rule constants - GRADUATED by night count
 const MIN_WORDS_REQUIRED = 3;
-const WARNING_THRESHOLD_MS = 5000; // Show warning at 5 seconds left (halfway)
+
+// Get grace period based on night count (more lenient early game)
+function getGracePeriodMs(nightCount: number): number {
+  if (nightCount <= 1) return 20000; // Night 1: 20 seconds grace
+  if (nightCount <= 2) return 15000; // Night 2: 15 seconds grace
+  if (nightCount <= 3) return 15000; // Night 3: 15 seconds grace
+  return 10000; // Night 4+: 10 seconds grace
+}
+
+// Get typing window based on night count
+function getTypingIntervalMs(nightCount: number): number {
+  if (nightCount <= 1) return 15000; // Night 1: 15 seconds to type
+  if (nightCount <= 2) return 12000; // Night 2: 12 seconds to type
+  if (nightCount <= 3) return 10000; // Night 3: 10 seconds to type
+  return 10000; // Night 4+: 10 seconds to type
+}
+
+// Warning threshold is always half the typing interval
+function getWarningThresholdMs(nightCount: number): number {
+  return getTypingIntervalMs(nightCount) / 2;
+}
 
 export default function Chat({ gameState, channel = "player" }: ChatProps) {
   const [message, setMessage] = useState("");
@@ -25,7 +43,7 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
   
   // Anti-AFK typing tracker
   const [wordsSentInWindow, setWordsSentInWindow] = useState(0);
-  const [timeRemaining, setTimeRemaining] = useState(TYPING_INTERVAL_MS / 1000);
+  const [timeRemaining, setTimeRemaining] = useState(15); // Default to Night 1 timing (15s)
   const [showWarning, setShowWarning] = useState(false);
   const lastResetTimeRef = useRef<number>(Date.now());
   const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -34,12 +52,15 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Get current phase to determine if anti-AFK rule applies
+  // Get current phase and night count to determine if anti-AFK rule applies
   const game = gameState?.gameState;
   const currentPhase = game?.game?.currentPhase || game?.game?.phase || game?.phase;
   const isNightPhase = currentPhase === "night";
   const currentPlayer = gameState?.getCurrentPlayer?.();
   const isAlive = currentPlayer?.isAlive;
+  
+  // Get night count for graduated timing
+  const nightCount = game?.game?.nightCount || game?.nightCount || 1;
 
   // Count words in a string
   const countWords = useCallback((text: string): number => {
@@ -64,12 +85,17 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
 
   // State for grace period
   const [inGracePeriod, setInGracePeriod] = useState(true);
-  const [graceTimeRemaining, setGraceTimeRemaining] = useState(GRACE_PERIOD_MS / 1000);
+  const [graceTimeRemaining, setGraceTimeRemaining] = useState(20); // Default to Night 1 timing
   const gracePeriodStartRef = useRef<number>(0);
 
   // Get player role to exempt werewolves
   const playerRole = gameState?.getPlayerRole?.();
   const isPlayerWerewolf = playerRole === "werewolf" || playerRole === "minion";
+
+  // Calculate timing based on night count (graduated system)
+  const GRACE_PERIOD_MS = getGracePeriodMs(nightCount);
+  const TYPING_INTERVAL_MS = getTypingIntervalMs(nightCount);
+  const WARNING_THRESHOLD_MS = getWarningThresholdMs(nightCount);
 
   // Reset word counter and check for violations - EXEMPT WEREWOLVES
   useEffect(() => {
@@ -86,12 +112,14 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
       return;
     }
 
-    // Start with grace period
+    // Start with grace period - timing depends on night count
     gracePeriodStartRef.current = Date.now();
     setInGracePeriod(true);
     setGraceTimeRemaining(GRACE_PERIOD_MS / 1000);
     setWordsSentInWindow(0);
     setTimeRemaining(TYPING_INTERVAL_MS / 1000);
+    
+    console.log(`🌙 Night ${nightCount}: Grace period ${GRACE_PERIOD_MS/1000}s, Typing window ${TYPING_INTERVAL_MS/1000}s`);
 
     typingIntervalRef.current = setInterval(() => {
       const now = Date.now();
@@ -126,7 +154,7 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
       if (elapsed >= TYPING_INTERVAL_MS) {
         if (wordsSentInWindow < MIN_WORDS_REQUIRED) {
           // LIGHTNING STRIKE! Player failed to type enough
-          console.log("⚡ LIGHTNING STRIKE! Failed to type minimum words");
+          console.log(`⚡ LIGHTNING STRIKE! Night ${nightCount} - Failed to type minimum words`);
           triggerLightningStrike();
         }
         
@@ -143,7 +171,7 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
         typingIntervalRef.current = null;
       }
     };
-  }, [isNightPhase, isAlive, channel, isPlayerWerewolf, wordsSentInWindow, triggerLightningStrike, inGracePeriod]);
+  }, [isNightPhase, isAlive, channel, isPlayerWerewolf, wordsSentInWindow, triggerLightningStrike, inGracePeriod, nightCount, GRACE_PERIOD_MS, TYPING_INTERVAL_MS, WARNING_THRESHOLD_MS]);
 
   useEffect(() => {
     const chatMessages = gameState?.gameState?.chatMessages;
@@ -295,7 +323,7 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
             </div>
             {inGracePeriod && (
               <div className="text-white text-xs mt-2 text-center">
-                Prepare to type! You must send {MIN_WORDS_REQUIRED}+ words every {TYPING_INTERVAL_MS/1000}s to avoid the Grand Wizard's lightning!
+                <strong>Night {nightCount}</strong> - Prepare to type! You must send {MIN_WORDS_REQUIRED}+ words every {TYPING_INTERVAL_MS/1000}s to avoid the Grand Wizard's lightning!
               </div>
             )}
             {showWarning && !inGracePeriod && (
