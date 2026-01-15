@@ -339,6 +339,7 @@ export default function GameScreen({ gameState }: GameScreenProps) {
           deadPlayers={game?.deadPlayers || []}
           currentPlayerId={gameState.playerId}
           gamePhase={game?.game?.currentPhase || game?.phase}
+          isCurrentPlayerDead={gameState.getCurrentPlayer()?.isAlive === false}
         />
 
         {/* Main Content Area */}

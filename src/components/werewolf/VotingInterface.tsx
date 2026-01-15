@@ -230,19 +230,48 @@ export default function VotingInterface({ gameState }: VotingInterfaceProps) {
   }
 
   // CRITICAL: Dead players should only spectate, not vote
+  // Get werewolves for spirit vision
+  const werewolves = game?.players?.filter((p: any) => p.role === "werewolf" || p.role === "minion") || [];
+  
   if (!currentPlayer?.isAlive) {
     return (
       <div className="flex-grow flex flex-col items-center justify-center p-2 sm:p-4 md:p-6">
-        <Card className="w-full max-w-xl bg-gray-900/90 border-2 border-gray-600">
-          <CardContent className="p-4 sm:p-6 md:p-8 text-center">
-            <div className="text-4xl sm:text-5xl md:text-6xl mb-4">👻</div>
-            <h3 className="text-xl sm:text-2xl font-cinzel font-bold text-gray-400 mb-2">
-              Spectating
-            </h3>
-            <p className="text-gray-500 text-sm sm:text-base md:text-lg mb-4">
-              You have been eliminated and cannot vote. Watch as the village decides...
-            </p>
-            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gray-800 rounded-lg border border-gray-700">
+        <Card className="w-full max-w-xl bg-purple-900/30 border-2 border-purple-500/50">
+          <CardContent className="p-4 sm:p-6 md:p-8">
+            <div className="text-center mb-4">
+              <div className="text-4xl sm:text-5xl md:text-6xl mb-4">👻</div>
+              <h3 className="text-xl sm:text-2xl font-cinzel font-bold text-purple-300 mb-2">
+                Spirit Vision
+              </h3>
+              <p className="text-purple-400 text-sm sm:text-base mb-4">
+                You have passed to the spirit realm. Watch as the living decide...
+              </p>
+            </div>
+            
+            {/* Reveal werewolves to dead players */}
+            <div className="mb-4 p-3 bg-red-900/30 rounded-lg border border-red-500/50">
+              <h4 className="text-red-400 font-bold text-sm mb-2 flex items-center gap-2">
+                🐺 The Werewolves Are:
+              </h4>
+              <div className="space-y-1">
+                {werewolves.length > 0 ? (
+                  werewolves.map((wolf: any) => (
+                    <div key={wolf.id || wolf.playerId} className="flex items-center gap-2 text-red-300 text-sm">
+                      <span>🐺</span>
+                      <span className={wolf.isAlive ? "text-red-300" : "text-red-300/50 line-through"}>
+                        {wolf.name}
+                      </span>
+                      {!wolf.isAlive && <span className="text-xs text-gray-500">(dead)</span>}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-sm">No werewolves remain...</p>
+                )}
+              </div>
+            </div>
+            
+            {/* Voting Progress */}
+            <div className="p-3 sm:p-4 bg-gray-800/50 rounded-lg border border-gray-700">
               <p className="text-gray-400 font-semibold text-sm sm:text-base mb-2">
                 Voting Progress
               </p>
@@ -251,7 +280,7 @@ export default function VotingInterface({ gameState }: VotingInterfaceProps) {
               </p>
               <div className="w-full bg-gray-700 rounded-full h-2 mt-3">
                 <div
-                  className="bg-gray-500 h-2 rounded-full transition-all duration-300"
+                  className="bg-purple-500 h-2 rounded-full transition-all duration-300"
                   style={{
                     width: `${totalAlivePlayers > 0 ? (totalVotes / totalAlivePlayers) * 100 : 0}%`,
                   }}

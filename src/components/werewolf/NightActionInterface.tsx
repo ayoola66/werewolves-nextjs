@@ -188,6 +188,9 @@ export default function NightActionInterface({
   const hasNightAction = ["werewolf", "doctor", "seer", "bodyguard"].includes(
     playerRole || ""
   );
+  
+  // Check if player is alive - dead players can only spectate
+  const isAlive = currentPlayer?.isAlive !== false;
 
   // Get the action type based on the player's role for the edge function
   const getActionType = () => {
@@ -262,6 +265,82 @@ export default function NightActionInterface({
       </div>
     );
   };
+
+  // If player is DEAD, show spectator view only - NO actions allowed
+  if (!isAlive) {
+    // Get werewolves for spirit vision
+    const werewolves = game?.players?.filter((p: any) => p.role === "werewolf" || p.role === "minion") || [];
+    
+    return (
+      <div className="flex-grow flex flex-col md:flex-row gap-2 sm:gap-3 md:gap-4 p-2 sm:p-3 md:p-4 overflow-hidden">
+        {/* Spirit Vision Panel - Dead players can see werewolves */}
+        <div className="flex-1 min-h-[200px] md:min-h-0">
+          <Card className="h-full bg-purple-900/20 border-2 border-purple-500/50 flex flex-col">
+            <CardHeader className="pb-2 sm:pb-3 p-2 sm:p-3 md:p-4">
+              <CardTitle className="font-cinzel text-sm sm:text-base md:text-lg lg:text-xl text-purple-300 flex items-center gap-2">
+                👻 Spirit Vision
+                <span className="text-xs font-normal text-purple-400">(You are watching as a spirit)</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-3 flex-grow overflow-auto">
+              <div className="text-center mb-4">
+                <div className="text-5xl mb-2">💀</div>
+                <p className="text-gray-300 text-sm">You have passed to the spirit realm...</p>
+                <p className="text-purple-300 text-xs mt-1">The veil is lifted - you can now see the truth.</p>
+              </div>
+              
+              {/* Reveal werewolves to dead players */}
+              <div className="mt-4 p-3 bg-red-900/30 rounded-lg border border-red-500/50">
+                <h3 className="text-red-400 font-bold text-sm mb-2 flex items-center gap-2">
+                  🐺 The Werewolves Are:
+                </h3>
+                <div className="space-y-1">
+                  {werewolves.length > 0 ? (
+                    werewolves.map((wolf: any) => (
+                      <div key={wolf.id || wolf.playerId} className="flex items-center gap-2 text-red-300">
+                        <span>🐺</span>
+                        <span className={wolf.isAlive ? "text-red-300" : "text-red-300/50 line-through"}>
+                          {wolf.name}
+                        </span>
+                        {!wolf.isAlive && <span className="text-xs text-gray-500">(dead)</span>}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-sm">No werewolves remain...</p>
+                  )}
+                </div>
+              </div>
+              
+              {/* Werewolf Chat - visible to spirits */}
+              <div className="mt-4">
+                <h3 className="text-red-400 font-bold text-sm mb-2 flex items-center gap-2">
+                  🐺 Werewolf Chat <span className="text-xs font-normal">(spirit vision)</span>
+                </h3>
+                <div className="max-h-[150px] overflow-auto">
+                  <Chat gameState={gameState} channel="werewolf" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Village Chat - spirits can observe but not participate */}
+        <div className="flex-1 min-h-[200px] md:min-h-0">
+          <Card className="h-full bg-gray-900/50 border-2 border-gray-600 flex flex-col">
+            <CardHeader className="pb-2 sm:pb-3 p-2 sm:p-3 md:p-4">
+              <CardTitle className="font-cinzel text-sm sm:text-base md:text-lg text-gray-400 flex items-center gap-2">
+                🌙 Village Chat
+                <span className="text-xs font-normal">(observing)</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 flex-grow overflow-hidden">
+              <Chat gameState={gameState} channel="player" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   // If player has no night action, show waiting screen WITH chat (Bug #3 fix)
   if (!hasNightAction) {

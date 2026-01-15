@@ -20,6 +20,7 @@ interface PlayerSidebarProps {
   deadPlayers: Player[];
   currentPlayerId?: string;
   gamePhase?: string; // To check if game is over (Bug #11 fix)
+  isCurrentPlayerDead?: boolean; // Spirit vision - dead players can see werewolves
 }
 
 export default function PlayerSidebar({
@@ -27,9 +28,10 @@ export default function PlayerSidebar({
   deadPlayers,
   currentPlayerId,
   gamePhase,
+  isCurrentPlayerDead = false,
 }: PlayerSidebarProps) {
-  // Only show dead player roles when game is over
-  const showDeadRoles = gamePhase === "game_over";
+  // Show all roles when game is over OR when current player is dead (spirit vision)
+  const showAllRoles = gamePhase === "game_over" || isCurrentPlayerDead;
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -87,47 +89,57 @@ export default function PlayerSidebar({
                 Alive Players
               </h3>
               <div className="space-y-2">
-                {alivePlayers.map((player) => (
-                  <div
-                    key={player.playerId}
-                    className={`
-                      p-3 rounded-lg border-2 border-green-600
-                      bg-gray-800/60 backdrop-blur-sm
-                      transition-all
-                      ${
-                        player.playerId === currentPlayerId
-                          ? "ring-2 ring-yellow-400 border-yellow-400"
-                          : ""
-                      }
-                    `}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="font-bold text-white text-sm sm:text-base truncate">
-                          {player.name}
-                          {player.playerId === currentPlayerId && " (You)"}
+                {alivePlayers.map((player) => {
+                  const isWerewolf = player.role === "werewolf" || player.role === "minion";
+                  return (
+                    <div
+                      key={player.playerId}
+                      className={`
+                        p-3 rounded-lg border-2 
+                        ${showAllRoles && isWerewolf ? "border-red-500 bg-red-900/30" : "border-green-600 bg-gray-800/60"}
+                        backdrop-blur-sm
+                        transition-all
+                        ${
+                          player.playerId === currentPlayerId
+                            ? "ring-2 ring-yellow-400 border-yellow-400"
+                            : ""
+                        }
+                      `}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold text-white text-sm sm:text-base truncate flex items-center gap-1">
+                            {showAllRoles && isWerewolf && <span>🐺</span>}
+                            {player.name}
+                            {player.playerId === currentPlayerId && " (You)"}
+                          </div>
+                          <div className="flex gap-1 mt-1 flex-wrap">
+                            {player.isHost && (
+                              <Badge className="text-xs bg-yellow-600 hover:bg-yellow-700">
+                                👑 HOST
+                              </Badge>
+                            )}
+                            {player.isSheriff && (
+                              <Badge className="text-xs bg-blue-600 hover:bg-blue-700">
+                                ⭐ SHERIFF
+                              </Badge>
+                            )}
+                            {showAllRoles && player.role && (
+                              <Badge className={`text-xs uppercase ${isWerewolf ? "bg-red-600" : "bg-gray-600"}`}>
+                                {player.role}
+                              </Badge>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex gap-1 mt-1 flex-wrap">
-                          {player.isHost && (
-                            <Badge className="text-xs bg-yellow-600 hover:bg-yellow-700">
-                              👑 HOST
-                            </Badge>
-                          )}
-                          {player.isSheriff && (
-                            <Badge className="text-xs bg-blue-600 hover:bg-blue-700">
-                              ⭐ SHERIFF
-                            </Badge>
-                          )}
+                        <div className="ml-2">
+                          <Badge className="text-xs bg-green-600 hover:bg-green-700">
+                            ✓ Alive
+                          </Badge>
                         </div>
-                      </div>
-                      <div className="ml-2">
-                        <Badge className="text-xs bg-green-600 hover:bg-green-700">
-                          ✓ Alive
-                        </Badge>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -159,9 +171,9 @@ export default function PlayerSidebar({
                                 ⭐ SHERIFF
                               </Badge>
                             )}
-                            {showDeadRoles && player.role && (
-                              <Badge className="text-xs bg-gray-700 uppercase">
-                                {player.role}
+                            {showAllRoles && player.role && (
+                              <Badge className={`text-xs uppercase ${player.role === "werewolf" || player.role === "minion" ? "bg-red-600" : "bg-gray-700"}`}>
+                                {player.role === "werewolf" || player.role === "minion" ? "🐺 " : ""}{player.role}
                               </Badge>
                             )}
                           </div>
