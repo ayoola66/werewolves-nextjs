@@ -32,12 +32,31 @@ serve(async (req) => {
       )
     }
 
+    // Reject any phase that isn't eligible — includes 'processing_votes' (already locked)
     if (game.current_phase !== 'voting') {
       return new Response(
         JSON.stringify({ success: true, alreadyProcessed: true }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
+    // ATOMIC LOCK: claim exclusive processing rights.
+    // Only one concurrent caller can update 'voting' → 'processing_votes'.
+    // All others will read 'processing_votes' and be turned away above.
+    const { data: locked } = await supabase
+      .from('games')
+      .update({ current_phase: 'processing_votes' })
+      .eq('id', game.id)
+      .eq('current_phase', 'voting')
+      .select('id')
+
+    if (!locked || locked.length === 0) {
+      return new Response(
+        JSON.stringify({ success: true, alreadyProcessed: true }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    // We now hold the exclusive lock — safe to process votes.
 
     // Get all votes
     const { data: votes } = await supabase

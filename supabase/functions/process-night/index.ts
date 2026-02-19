@@ -32,7 +32,7 @@ serve(async (req) => {
       )
     }
 
-    // Allow processing if in night phase OR role_reveal phase (transition role_reveal → night)
+    // Reject any phase that isn't eligible — includes 'processing' (already locked by another call)
     if (game.current_phase !== 'night' && game.current_phase !== 'role_reveal') {
       return new Response(
         JSON.stringify({ success: true, alreadyProcessed: true }),
@@ -40,22 +40,16 @@ serve(async (req) => {
       )
     }
 
-    // If in role_reveal phase, just transition to night without processing actions
+    // ATOMIC LOCK for role_reveal → night transition.
+    // The UPDATE only succeeds if current_phase is still 'role_reveal'.
+    // Postgres serialises concurrent UPDATEs on the same row, so exactly one caller wins.
     if (game.current_phase === 'role_reveal') {
-      const PHASE_TIMERS = {
-        role_reveal: 15,
-        night: 120,
-        day: 180,
-        voting: 120,
-        voting_results: 10
-      }
-
-      const phaseTimer = PHASE_TIMERS.night
+      const phaseTimer = 120
       const phaseEndTime = new Date(Date.now() + phaseTimer * 1000)
-      
-      await supabase
+
+      const { data: locked } = await supabase
         .from('games')
-        .update({ 
+        .update({
           current_phase: 'night',
           phase_timer: phaseTimer,
           phase_end_time: phaseEndTime.toISOString(),
@@ -63,6 +57,15 @@ serve(async (req) => {
           last_phase_change: new Date().toISOString()
         })
         .eq('id', game.id)
+        .eq('current_phase', 'role_reveal')
+        .select('id')
+
+      if (!locked || locked.length === 0) {
+        return new Response(
+          JSON.stringify({ success: true, alreadyProcessed: true }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
 
       await supabase
         .from('chat_messages')
@@ -77,6 +80,24 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
+    // ATOMIC LOCK for night processing.
+    // Transitions phase to 'processing' only if it is still 'night'.
+    // Any concurrent caller that arrives after us will read 'processing' and bail out above.
+    const { data: locked } = await supabase
+      .from('games')
+      .update({ current_phase: 'processing' })
+      .eq('id', game.id)
+      .eq('current_phase', 'night')
+      .select('id')
+
+    if (!locked || locked.length === 0) {
+      return new Response(
+        JSON.stringify({ success: true, alreadyProcessed: true }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    // We now hold the exclusive lock — safe to process night actions.
 
     // Get all night actions
     const { data: actions } = await supabase
