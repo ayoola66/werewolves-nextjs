@@ -261,6 +261,45 @@ export default function NightActionInterface({
     );
   };
 
+  // If player is dead, show spectator view
+  if (!currentPlayer?.isAlive) {
+    return (
+      <div className="flex-grow flex flex-col md:flex-row gap-2 sm:gap-3 md:gap-4 p-2 sm:p-3 md:p-4 overflow-hidden">
+        <div className="flex-1 min-h-[200px] md:min-h-0 max-h-[350px] md:max-h-full">
+          <Card className="h-full bg-indigo-900/10 border-2 border-indigo-600 flex flex-col">
+            <CardHeader className="pb-2 sm:pb-3 p-2 sm:p-3 md:p-4">
+              <CardTitle className="font-cinzel text-sm sm:text-base md:text-lg lg:text-xl text-indigo-400 flex items-center gap-2">
+                🌙 Village Chat
+                <span className="text-xs font-normal text-gray-400 ml-2 px-1.5 py-0.5 bg-gray-700 rounded">SPECTATOR</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 flex-grow overflow-hidden">
+              <Chat gameState={gameState} channel="player" />
+            </CardContent>
+          </Card>
+        </div>
+        <div className="flex-1 max-w-xl">
+          <Card className="h-full bg-gray-900/90 border-2 border-gray-600 flex flex-col">
+            <CardContent className="p-4 sm:p-6 md:p-8 text-center flex-grow flex flex-col justify-center">
+              <div className="text-4xl sm:text-5xl md:text-6xl mb-4">👻</div>
+              <h3 className="text-xl sm:text-2xl font-cinzel font-bold text-gray-300 mb-2">
+                Spectator Mode
+              </h3>
+              <p className="text-gray-400 text-sm sm:text-base md:text-lg mb-4">
+                You have been eliminated. Watch the game unfold — roles are revealed when it ends.
+              </p>
+              <div className="p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+                <p className="text-gray-500 text-xs sm:text-sm">
+                  You can observe all public game events and read chat, but cannot vote or take actions.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   // If player has no night action, show waiting screen WITH chat (Bug #3 fix)
   if (!hasNightAction) {
     return (

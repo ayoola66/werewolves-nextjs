@@ -332,7 +332,11 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={
-              canChat ? "Type your message..." : "You cannot speak now..."
+              canChat
+                ? "Type your message..."
+                : !currentPlayer?.isAlive
+                ? "You are a spectator..."
+                : "You cannot speak now..."
             }
             disabled={!canChat}
             className="flex-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 border-amber-900/20 focus:border-amber-600 disabled:opacity-50"
@@ -348,8 +352,8 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
         </div>
 
         {!canChat && currentPlayer && !currentPlayer.isAlive && (
-          <p className="text-xs text-center text-gray-600 dark:text-gray-400">
-            The dead tell no tales...
+          <p className="text-xs text-center text-gray-500 dark:text-gray-500">
+            👻 Spectator mode — observing only
           </p>
         )}
       </CardContent>
