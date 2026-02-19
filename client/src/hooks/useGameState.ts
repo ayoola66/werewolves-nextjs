@@ -302,6 +302,8 @@ export function useGameState() {
         if (game && players && Array.isArray(players)) {
           const alivePlayers = players.filter((p) => p.is_alive);
           const deadPlayers = players.filter((p) => !p.is_alive);
+          const isCurrentPlayerWerewolf =
+            players.find((p) => p.player_id === playerId)?.role === 'werewolf';
 
           setGameState({
             game: {
@@ -386,7 +388,7 @@ export function useGameState() {
               playerId: m.player_id,
               playerName: m.player_name,
               message: m.message,
-              originalMessage: null,
+              originalMessage: isCurrentPlayerWerewolf ? m.original_message : null,
               type: m.type,
               createdAt: m.created_at,
             })) : [],
