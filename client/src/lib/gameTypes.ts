@@ -86,6 +86,7 @@ export interface ChatMessage {
   playerId: string | null;
   playerName: string;
   message: string;
+  originalMessage?: string;
   type:
     | "player"
     | "system"
@@ -96,6 +97,25 @@ export interface ChatMessage {
   createdAt: Date;
 }
 
+export interface Vote {
+  id: any;
+  gameId: any;
+  voterId: any;
+  targetId: any;
+  phase: any;
+  createdAt: any;
+}
+
+export interface NightAction {
+  id: any;
+  gameId: any;
+  playerId: any;
+  targetId: any;
+  actionType: any;
+  phase: any;
+  createdAt: any;
+}
+
 export interface GameState {
   game: Game;
   players: Player[];
@@ -103,8 +123,8 @@ export interface GameState {
   deadPlayers: Player[];
   phase: Phase;
   phaseTimer: number;
-  votes: Record<string, string>;
-  nightActions: Record<string, any>;
+  votes: Vote[];
+  nightActions: NightAction[];
   chatMessages?: ChatMessage[];
   seerInvestigationsLeft?: Record<string, number>;
   werewolfCount?: number;
