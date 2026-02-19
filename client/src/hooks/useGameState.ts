@@ -425,6 +425,14 @@ export function useGameState() {
     fetchGameStateRef.current = fetchGameState;
   }, [fetchGameState]);
 
+  // Reset night action flag at the start of each night phase
+  useEffect(() => {
+    const currentPhase = gameState?.game?.currentPhase || gameState?.game?.phase || gameState?.phase;
+    if (currentPhase === 'night') {
+      setHasPerformedNightAction(false);
+    }
+  }, [gameState?.game?.currentPhase, gameState?.game?.phase, gameState?.phase]);
+
   // Phase timer checking - automatically transition phases when timer expires
   useEffect(() => {
     if (!gameState?.game?.gameCode || currentScreen !== "game") return;
