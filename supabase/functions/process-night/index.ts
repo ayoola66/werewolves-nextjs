@@ -35,8 +35,8 @@ serve(async (req) => {
     // Allow processing if in night phase OR role_reveal phase (transition role_reveal → night)
     if (game.current_phase !== 'night' && game.current_phase !== 'role_reveal') {
       return new Response(
-        JSON.stringify({ error: 'Not in night or role_reveal phase' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ success: true, alreadyProcessed: true }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 

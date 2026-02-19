@@ -34,8 +34,8 @@ serve(async (req) => {
 
     if (game.current_phase !== 'voting') {
       return new Response(
-        JSON.stringify({ error: 'Not in voting phase' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ success: true, alreadyProcessed: true }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
