@@ -417,7 +417,7 @@ export function useGameState() {
         console.error("Error fetching game state:", error);
       }
     },
-    [logError]
+    [logError, playerId]
   );
 
   // Update the ref when fetchGameState changes
