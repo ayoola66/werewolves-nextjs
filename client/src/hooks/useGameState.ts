@@ -323,7 +323,9 @@ export function useGameState() {
               gameId: p.game_id,
               playerId: p.player_id,
               name: p.name || p.player_name,
-              role: p.role,
+              role: p.player_id === playerId || (game.current_phase || game.phase) === 'game_over'
+                ? p.role
+                : null,
               isAlive: p.is_alive,
               isHost: p.player_id === game.host_id,
               isSheriff: p.is_sheriff,
@@ -336,7 +338,9 @@ export function useGameState() {
               gameId: p.game_id,
               playerId: p.player_id,
               name: p.name || p.player_name,
-              role: p.role,
+              role: p.player_id === playerId || (game.current_phase || game.phase) === 'game_over'
+                ? p.role
+                : null,
               isAlive: true,
               isHost: p.player_id === game.host_id,
               isSheriff: p.is_sheriff,
@@ -349,7 +353,9 @@ export function useGameState() {
               gameId: p.game_id,
               playerId: p.player_id,
               name: p.name || p.player_name,
-              role: p.role,
+              role: p.player_id === playerId || (game.current_phase || game.phase) === 'game_over'
+                ? p.role
+                : null,
               isAlive: false,
               isHost: p.player_id === game.host_id,
               isSheriff: p.is_sheriff,
