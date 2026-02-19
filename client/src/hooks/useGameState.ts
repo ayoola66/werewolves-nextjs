@@ -386,7 +386,7 @@ export function useGameState() {
               playerId: m.player_id,
               playerName: m.player_name,
               message: m.message,
-              originalMessage: m.original_message, // For werewolves to see unscrambled village chat
+              originalMessage: null,
               type: m.type,
               createdAt: m.created_at,
             })) : [],

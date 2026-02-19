@@ -86,7 +86,7 @@ export interface ChatMessage {
   playerId: string | null;
   playerName: string;
   message: string;
-  originalMessage?: string;
+  originalMessage?: string | null;
   type:
     | "player"
     | "system"
