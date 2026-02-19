@@ -19,7 +19,7 @@ export default function WerewolfGame() {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-fixed opacity-30"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')"
+            backgroundImage: "url('/assets/Werewolves-Village-background.png')"
           }}
         />
         

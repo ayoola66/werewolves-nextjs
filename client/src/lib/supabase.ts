@@ -1,7 +1,7 @@
 import { createClient, RealtimeChannel } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://lfexxmccwzfvlmwgqgdq.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmZXh4bWNjd3pmdmxtd2dxZ2RxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5MTE2MjksImV4cCI6MjA4MzQ4NzYyOX0.aRwqQJqgGRctamHTGsHCdRbjDdWrRXKWU4J475elr5M'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   realtime: {
