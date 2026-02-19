@@ -32,12 +32,6 @@ serve(async (req) => {
       )
     }
 
-    // Get all players for debugging
-    const { data: allPlayers } = await supabase
-      .from('players')
-      .select('player_id, name, is_host')
-      .eq('game_id', game.id)
-
     // Verify player is host - use player_id field (text) not id (integer)
     // Use 'let' to allow reassignment in fallback logic
     let { data: player, error: playerError } = await supabase
@@ -59,17 +53,8 @@ serve(async (req) => {
           .single()
         
         if (hostError || !hostPlayer) {
-          const playerList = allPlayers?.map(p => `${p.name} (${p.player_id})`).join(', ') || 'none'
           return new Response(
-            JSON.stringify({ 
-              error: 'Player not found in game',
-              debug: {
-                requestedPlayerId: playerId,
-                gameHostId: game.host_id,
-                gameId: game.id,
-                playersInGame: playerList
-              }
-            }),
+            JSON.stringify({ error: 'Player not found in game' }),
             { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
@@ -83,18 +68,8 @@ serve(async (req) => {
         // Assign hostPlayer to player variable (now works because we use 'let')
         player = hostPlayer
       } else {
-        const playerList = allPlayers?.map(p => `${p.name} (${p.player_id})`).join(', ') || 'none'
         return new Response(
-          JSON.stringify({ 
-            error: 'Player not found in game',
-            debug: {
-              requestedPlayerId: playerId,
-              gameHostId: game.host_id,
-              gameId: game.id,
-              playersInGame: playerList,
-              playerError: playerError?.message
-            }
-          }),
+          JSON.stringify({ error: 'Player not found in game' }),
           { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
