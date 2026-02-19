@@ -94,7 +94,7 @@ serve(async (req) => {
       night: 120
     }
 
-    const newNight = (game.night_count || 0) + 1
+    const newNight = Number(game.night_count || 0) + 1
     const phaseTimer = PHASE_TIMERS.night
     const phaseEndTime = new Date(Date.now() + phaseTimer * 1000)
     

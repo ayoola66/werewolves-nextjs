@@ -97,7 +97,7 @@ serve(async (req) => {
 
       const phaseTimer = PHASE_TIMERS.day
       const phaseEndTime = new Date(Date.now() + phaseTimer * 1000)
-      const newDayCount = (game.day_count || 0) + 1
+      const newDayCount = Number(game.day_count || 0) + 1
       
       await supabase
         .from('games')
@@ -397,7 +397,7 @@ serve(async (req) => {
       // Transition to day phase
       const phaseTimer = PHASE_TIMERS.day
       const phaseEndTime = new Date(Date.now() + phaseTimer * 1000)
-      const newDayCount = (game.day_count || 0) + 1
+      const newDayCount = Number(game.day_count || 0) + 1
       
       await supabase
         .from('games')
