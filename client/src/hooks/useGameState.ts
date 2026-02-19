@@ -490,6 +490,18 @@ export function useGameState() {
                 gameCode: gameState.game.gameCode,
               });
             } else {
+              // Show private seer result toast before refreshing state
+              if (data.investigationResult && data.investigationTargetName) {
+                const currentPlayer = gameState.players?.find(p => p.playerId === playerId);
+                if (currentPlayer?.role === 'seer') {
+                  const isWerewolf = data.investigationResult === 'werewolf';
+                  toast({
+                    title: '🔮 Seer Vision',
+                    description: `${data.investigationTargetName} is ${isWerewolf ? 'a WEREWOLF! 🐺' : 'NOT a werewolf ✅'}`,
+                    variant: isWerewolf ? 'destructive' : 'default',
+                  });
+                }
+              }
               // Refresh game state after processing
               await fetchGameState(gameState.game.gameCode);
             }

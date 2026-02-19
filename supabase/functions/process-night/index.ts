@@ -157,6 +157,7 @@ serve(async (req) => {
     let witchSaveTargetId: string | null = null
     let witchPoisonTargetId: string | null = null
     let investigationResult: string | null = null
+    let investigationTargetName: string | null = null
     const deaths: string[] = []
     const messages: string[] = []
 
@@ -202,10 +203,7 @@ serve(async (req) => {
     if (investigateAction) {
       const target = allPlayers.find(p => p.player_id === investigateAction.target_id)
       investigationResult = target?.role === 'werewolf' ? 'werewolf' : 'not werewolf'
-      const seer = allPlayers.find(p => p.player_id === investigateAction.player_id)
-      if (seer && target) {
-        messages.push(`🔮 The seer investigated ${target.name} and discovered they are ${investigationResult === 'werewolf' ? 'a werewolf' : 'not a werewolf'}!`)
-      }
+      investigationTargetName = target?.name || null
     }
 
     // 6. Find witch poison (processed after kill)
@@ -420,9 +418,10 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: true,
-        investigationResult
+        investigationResult,
+        investigationTargetName
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
