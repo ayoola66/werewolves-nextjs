@@ -32,6 +32,7 @@ export default function GameScreen({ gameState }: GameScreenProps) {
   const [transitionPhase, setTransitionPhase] = useState("");
   const [prevPhase, setPrevPhase] = useState("");
   const [showEliminatedOverlay, setShowEliminatedOverlay] = useState(false);
+  const [isStartingVote, setIsStartingVote] = useState(false);
   const wasAliveRef = useRef<boolean | null>(null);
   const { setTheme } = useTheme();
   
@@ -454,10 +455,15 @@ export default function GameScreen({ gameState }: GameScreenProps) {
                   gameState.getCurrentPlayer()?.isAlive && (
                     <div className="mt-4 flex justify-center">
                       <Button
-                        onClick={() => gameState.startVoting()}
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 text-lg shadow-lg"
+                        onClick={async () => {
+                          if (isStartingVote) return;
+                          setIsStartingVote(true);
+                          await gameState.startVoting();
+                        }}
+                        disabled={isStartingVote}
+                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        🗳️ Start Voting Now
+                        {isStartingVote ? '⏳ Starting...' : '🗳️ Start Voting Now'}
                       </Button>
                     </div>
                   )}
