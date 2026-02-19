@@ -93,6 +93,48 @@ export function useGameState() {
           await debouncedFetchGameState(gameState.game.gameCode);
         }
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "chat_messages",
+          filter: `game_id=eq.${gameState.game.id}`,
+        },
+        (payload: any) => {
+          const newMsg = payload.new;
+          setGameState((prev) => {
+            if (!prev) return prev;
+            // Determine if the current player is a werewolf using their own role in state
+            const currentPlayerRole = prev.players?.find(
+              (p) => p.playerId === playerId
+            )?.role;
+            const isWerewolfPlayer =
+              currentPlayerRole === "werewolf" ||
+              currentPlayerRole === "minion";
+            // Only deliver werewolf-channel messages to werewolves
+            if (newMsg.type === "werewolf" && !isWerewolfPlayer) return prev;
+            // Skip duplicates (can happen on reconnect)
+            if (prev.chatMessages?.some((m) => m.id === newMsg.id)) return prev;
+            const mapped = {
+              id: newMsg.id,
+              gameId: newMsg.game_id,
+              playerId: newMsg.player_id,
+              playerName: newMsg.player_name,
+              message: newMsg.message,
+              originalMessage: isWerewolfPlayer
+                ? newMsg.original_message
+                : null,
+              type: newMsg.type,
+              createdAt: newMsg.created_at,
+            };
+            return {
+              ...prev,
+              chatMessages: [...(prev.chatMessages || []), mapped],
+            };
+          });
+        }
+      )
       .subscribe();
 
     return () => {
