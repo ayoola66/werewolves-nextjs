@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, Copy, Users, UserPlus } from 'lucide-react';
+import { AlertCircle, Users, UserPlus } from 'lucide-react';
 import { useErrorLog } from '@/hooks/useErrorLog';
+import Footer from '@/components/Footer';
 
 interface InitialScreenProps {
   gameState: any;
@@ -31,6 +32,7 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
   };
 
   return (
+    <div className="w-full">
     <div className="text-center max-w-2xl mx-auto">
       {/* Hero Section with Logo */}
       <div className="mb-8">
@@ -92,10 +94,11 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
             
             <div className="space-y-4">
               <div>
-                <label className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
+                <label htmlFor="join-game-code" className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
                   Game Code
                 </label>
                 <Input
+                  id="join-game-code"
                   type="text"
                   value={gameCode}
                   onChange={(e) => setGameCode(e.target.value.toUpperCase())}
@@ -106,10 +109,11 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
               </div>
               
               <div>
-                <label className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
+                <label htmlFor="join-player-name" className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
                   Your Name
                 </label>
                 <Input
+                  id="join-player-name"
                   type="text"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
@@ -119,7 +123,7 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
                 />
               </div>
             </div>
-            
+
             <div className="flex gap-3 pt-2">
               <Button
                 onClick={() => setShowJoinForm(false)}
@@ -146,10 +150,11 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
             <h2 className="font-cinzel text-2xl text-ember mb-4">Begin the Hunt</h2>
             
             <div>
-              <label className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
+              <label htmlFor="create-player-name" className="block text-parchment/60 text-sm mb-2 text-left uppercase tracking-wider">
                 Your Name
               </label>
               <Input
+                id="create-player-name"
                 type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
@@ -178,40 +183,26 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
         </Card>
       )}
 
-      {/* Footer Section */}
-      <div className="mt-12 pt-8 border-t border-iron-gray/30">
-        {/* Decorative small logo */}
-        <div className="flex justify-center mb-4">
-          <img 
-            src="/assets/Werewolves-Village-t1-logo-sq-nobg.png" 
-            alt="" 
-            className="h-10 w-auto opacity-40"
-          />
+      {/* Error Logs Link - Developer tool, subtle placement */}
+      {newErrorsCount > 0 && (
+        <div className="mt-8">
+          <Link href="/error-logs">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-parchment/30 hover:text-ember hover:bg-iron-gray/20"
+            >
+              <AlertCircle className="w-4 h-4 mr-2" />
+              Error Logs
+              <Badge variant="destructive" className="ml-2 bg-blood">
+                {newErrorsCount}
+              </Badge>
+            </Button>
+          </Link>
         </div>
-        
-        <p className="text-parchment/40 text-sm">
-          Forged in Moonlight
-        </p>
-        
-        {/* Error Logs Link - Developer tool, subtle placement */}
-        {newErrorsCount > 0 && (
-          <div className="mt-4">
-            <Link href="/error-logs">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-parchment/30 hover:text-ember hover:bg-iron-gray/20"
-              >
-                <AlertCircle className="w-4 h-4 mr-2" />
-                Error Logs
-                <Badge variant="destructive" className="ml-2 bg-blood">
-                  {newErrorsCount}
-                </Badge>
-              </Button>
-            </Link>
-          </div>
-        )}
-      </div>
+      )}
+    </div>
+    <Footer />
     </div>
   );
 }
