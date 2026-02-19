@@ -1,6 +1,7 @@
 import { Link } from 'wouter';
 import { Card, CardContent } from '@/components/ui/card';
-import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import PageLayout from '@/components/PageLayout';
 
 interface FAQItem {
   question: string;
@@ -30,15 +31,15 @@ const faqs: FAQItem[] = [
   },
   {
     question: "How does the day/night cycle work?",
-    answer: "The game alternates between Night and Day phases. At Night, Werewolves choose a victim and special roles use their abilities. During Day, players discuss (verbally, not in-game) and vote to eliminate a suspect."
+    answer: "The game alternates between Night and Day phases. At Night, Werewolves choose a victim and special roles use their abilities. During Day, players discuss (verbally) and vote to eliminate a suspect."
   },
   {
     question: "What is the one-time shield?",
-    answer: "Every player starts with a single-use shield. You can activate it during any Night phase to protect yourself from all attacks. Once used, it's gone for the rest of the game - use it wisely!"
+    answer: "Every player starts with a single-use shield. You can activate it during any Night phase to protect yourself from all attacks. Once used, it's gone for the rest of the game — use it wisely!"
   },
   {
     question: "What is the lightning strike feature?",
-    answer: "To keep games moving and prevent AFK (away from keyboard) players, those who don't participate in the night chat may be struck by lightning and eliminated. Stay active by typing at least 3 words periodically during Night."
+    answer: "To keep games moving and prevent AFK players, those who don't participate in the night chat may be struck by lightning and eliminated. Stay active by typing at least 3 words periodically during Night."
   },
   {
     question: "Why are my messages scrambled?",
@@ -92,75 +93,56 @@ const faqs: FAQItem[] = [
 
 export default function FAQPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex flex-col">
-      <main className="flex-grow container mx-auto px-4 py-8 max-w-4xl">
-        {/* Back to Home */}
-        <Link href="/" className="inline-flex items-center text-purple-400 hover:text-purple-300 mb-6">
-          ← Back to Game
+    <PageLayout
+      title="FAQ"
+      subtitle="Everything you need to know about playing Werewolf online"
+    >
+      <div className="space-y-3">
+        {faqs.map((faq, index) => (
+          <Card key={index} className="panel-stone border-iron-gray/40 hover:border-ember/30 transition-colors duration-200">
+            <CardContent className="p-5 md:p-6">
+              <h3 className="text-base font-bold text-parchment mb-2 flex items-start gap-3">
+                <span className="text-ember font-cinzel font-bold flex-shrink-0 text-sm mt-0.5">Q.</span>
+                {faq.question}
+              </h3>
+              <p className="text-parchment/60 pl-6 text-sm leading-relaxed">
+                {faq.answer}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Card className="panel-stone border-ember/30 mt-8">
+        <CardContent className="p-6 text-center">
+          <div className="divider-medieval w-32 mx-auto mb-5" />
+          <h2 className="font-cinzel text-xl text-ember mb-2">Still Have Questions?</h2>
+          <p className="text-parchment/60 text-sm mb-5">
+            Can't find what you're looking for? We're here to help.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/contact">
+              <Button className="btn-ember py-2 px-6 rounded font-bold text-sm">
+                Contact Us
+              </Button>
+            </Link>
+            <Link href="/how-to-play">
+              <Button className="btn-iron py-2 px-6 rounded font-bold text-sm">
+                How to Play
+              </Button>
+            </Link>
+          </div>
+          <div className="divider-medieval w-32 mx-auto mt-5" />
+        </CardContent>
+      </Card>
+
+      <div className="text-center mt-8 pb-8">
+        <Link href="/">
+          <Button className="btn-ember py-4 px-10 text-lg rounded font-bold">
+            Enter the Village
+          </Button>
         </Link>
-
-        <h1 className="text-4xl md:text-5xl font-cinzel font-bold text-red-500 text-center mb-4">
-          Frequently Asked Questions
-        </h1>
-        <p className="text-gray-400 text-center mb-8">
-          Everything you need to know about playing Werewolf online
-        </p>
-
-        {/* FAQ List */}
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <Card key={index} className="bg-gray-800/80 border-purple-500/30 hover:border-purple-500/60 transition-colors">
-              <CardContent className="p-4 md:p-6">
-                <h3 className="text-lg font-bold text-purple-300 mb-2 flex items-start gap-2">
-                  <span className="text-purple-500">Q:</span>
-                  {faq.question}
-                </h3>
-                <p className="text-gray-300 pl-6">
-                  <span className="text-green-500 font-bold">A:</span>{' '}
-                  {faq.answer}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Still have questions */}
-        <Card className="bg-gradient-to-r from-purple-900/50 to-indigo-900/50 border-purple-500/50 mt-8">
-          <CardContent className="p-6 text-center">
-            <div className="text-4xl mb-3">❓</div>
-            <h2 className="text-2xl font-bold text-purple-300 mb-2">Still Have Questions?</h2>
-            <p className="text-gray-300 mb-4">
-              Can't find what you're looking for? We're here to help!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/contact"
-                className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
-              >
-                📧 Contact Us
-              </Link>
-              <Link
-                href="/how-to-play"
-                className="inline-block bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-colors"
-              >
-                📖 How to Play
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* CTA */}
-        <div className="text-center mt-8">
-          <Link
-            href="/"
-            className="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors"
-          >
-            🎮 Start Playing Now
-          </Link>
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </PageLayout>
   );
 }

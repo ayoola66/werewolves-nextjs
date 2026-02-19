@@ -1,224 +1,182 @@
 import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import PageLayout from '@/components/PageLayout';
 
 export default function HowToPlayPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex flex-col">
-      <main className="flex-grow container mx-auto px-4 py-8 max-w-4xl">
-        {/* Back to Home */}
-        <Link href="/" className="inline-flex items-center text-purple-400 hover:text-purple-300 mb-6">
-          ← Back to Game
-        </Link>
-
-        <h1 className="text-4xl md:text-5xl font-cinzel font-bold text-red-500 text-center mb-8">
-          How to Play Werewolf
-        </h1>
-
-        <p className="text-gray-300 text-center text-lg mb-8">
-          Master the art of deception and deduction in this classic social party game
-        </p>
-
-        {/* Game Overview */}
-        <Card className="bg-gray-800/80 border-purple-500/50 mb-6">
-          <CardHeader>
-            <CardTitle className="text-2xl text-purple-300 flex items-center gap-2">
-              🎮 Game Overview
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-gray-300 space-y-4">
-            <p>
-              Werewolf is a social deduction game where players are secretly assigned roles:{' '}
-              <strong className="text-red-400">Werewolves</strong> or{' '}
-              <strong className="text-green-400">Villagers</strong>.
-            </p>
-            <p>
-              The Werewolves know each other and must eliminate Villagers without being discovered.
-              The Villagers must work together to identify and vote out the Werewolves before it's too late.
-            </p>
-            <div className="grid md:grid-cols-2 gap-4 mt-4">
-              <div className="p-4 bg-red-900/30 rounded-lg border border-red-500/50">
-                <h3 className="font-bold text-red-400 mb-2">🐺 Werewolf Goal</h3>
-                <p className="text-sm">Eliminate enough Villagers until Werewolves equal or outnumber them.</p>
-              </div>
-              <div className="p-4 bg-green-900/30 rounded-lg border border-green-500/50">
-                <h3 className="font-bold text-green-400 mb-2">🏘️ Villager Goal</h3>
-                <p className="text-sm">Identify and vote out all Werewolves before they take over the village.</p>
-              </div>
+    <PageLayout
+      title="How to Play"
+      subtitle="Master the art of deception and deduction"
+    >
+      {/* Game Overview */}
+      <Card className="panel-stone border-iron-gray/60 mb-6">
+        <CardHeader>
+          <CardTitle className="font-cinzel text-xl text-ember">Game Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="text-parchment/70 space-y-4">
+          <p>
+            Werewolf is a social deduction game where players are secretly assigned roles:{' '}
+            <strong className="text-blood">Werewolves</strong> or{' '}
+            <strong className="text-parchment">Villagers</strong>.
+          </p>
+          <p>
+            The Werewolves know each other and must eliminate Villagers without being discovered.
+            The Villagers must work together to identify and vote out the Werewolves before it's too late.
+          </p>
+          <div className="grid md:grid-cols-2 gap-4 mt-2">
+            <div className="p-4 bg-blood/10 rounded border border-blood/30">
+              <h3 className="font-cinzel text-xs uppercase tracking-wider text-blood mb-2">Werewolf Goal</h3>
+              <p className="text-sm text-parchment/60">Eliminate enough Villagers until Werewolves equal or outnumber them.</p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Game Phases */}
-        <Card className="bg-gray-800/80 border-purple-500/50 mb-6">
-          <CardHeader>
-            <CardTitle className="text-2xl text-purple-300 flex items-center gap-2">
-              🌙 Game Phases
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-gray-300 space-y-6">
-            {/* Night Phase */}
-            <div className="p-4 bg-indigo-900/30 rounded-lg border border-indigo-500/50">
-              <h3 className="font-bold text-indigo-300 text-xl mb-3">🌙 Night Phase</h3>
-              <ul className="space-y-2 text-sm">
-                <li>• <strong>Werewolves</strong> secretly communicate and choose a Villager to eliminate</li>
-                <li>• <strong>Doctor</strong> (if in game) chooses someone to protect from the Werewolf attack</li>
-                <li>• <strong>Seer</strong> (if in game) investigates one player to learn their true role</li>
-                <li>• <strong>Villagers</strong> must chat to avoid being struck by lightning (anti-AFK)</li>
-                <li>• All players can activate their one-time shield for protection</li>
-              </ul>
+            <div className="p-4 bg-iron-gray/20 rounded border border-parchment/10">
+              <h3 className="font-cinzel text-xs uppercase tracking-wider text-parchment mb-2">Villager Goal</h3>
+              <p className="text-sm text-parchment/60">Identify and vote out all Werewolves before they take over the village.</p>
             </div>
+          </div>
+        </CardContent>
+      </Card>
 
-            {/* Day Phase */}
-            <div className="p-4 bg-amber-900/30 rounded-lg border border-amber-500/50">
-              <h3 className="font-bold text-amber-300 text-xl mb-3">☀️ Day Phase</h3>
-              <ul className="space-y-2 text-sm">
-                <li>• The village awakens and discovers who was eliminated overnight</li>
-                <li>• Players discuss verbally (via voice chat, video call, or in person)</li>
-                <li>• Werewolves try to blend in and deflect suspicion</li>
-                <li>• Villagers share information and try to identify the wolves</li>
-                <li>• No in-game chat during the day - use your voice!</li>
-              </ul>
-            </div>
-
-            {/* Voting Phase */}
-            <div className="p-4 bg-red-900/30 rounded-lg border border-red-500/50">
-              <h3 className="font-bold text-red-300 text-xl mb-3">⚖️ Voting Phase</h3>
-              <ul className="space-y-2 text-sm">
-                <li>• Each player votes to eliminate one suspect</li>
-                <li>• Votes are secret until everyone has voted</li>
-                <li>• The player with the most votes is eliminated</li>
-                <li>• If there's a tie, no one is eliminated</li>
-                <li>• After voting, the cycle returns to Night</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Roles */}
-        <Card className="bg-gray-800/80 border-purple-500/50 mb-6">
-          <CardHeader>
-            <CardTitle className="text-2xl text-purple-300 flex items-center gap-2">
-              🎭 Roles
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-gray-300">
-            <div className="grid gap-4">
-              {/* Evil Team */}
-              <div className="p-4 bg-red-900/20 rounded-lg border border-red-500/30">
-                <h3 className="font-bold text-red-400 text-lg mb-3">🔴 Evil Team</h3>
-                <div className="space-y-3">
-                  <div>
-                    <span className="font-bold text-red-300">🐺 Werewolf</span>
-                    <p className="text-sm text-gray-400">Hunts Villagers at night. Knows who other Werewolves are. Must blend in during the day.</p>
-                  </div>
-                  <div>
-                    <span className="font-bold text-red-300">🦇 Minion</span>
-                    <p className="text-sm text-gray-400">Knows who the Werewolves are but appears as a Villager. Wins with the Werewolves.</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Village Team */}
-              <div className="p-4 bg-green-900/20 rounded-lg border border-green-500/30">
-                <h3 className="font-bold text-green-400 text-lg mb-3">🟢 Village Team</h3>
-                <div className="space-y-3">
-                  <div>
-                    <span className="font-bold text-green-300">👤 Villager</span>
-                    <p className="text-sm text-gray-400">A regular village member with no special powers. Must use wit and observation to survive.</p>
-                  </div>
-                  <div>
-                    <span className="font-bold text-green-300">💊 Doctor</span>
-                    <p className="text-sm text-gray-400">Can protect one player each night from being killed. Cannot protect the same player twice in a row.</p>
-                  </div>
-                  <div>
-                    <span className="font-bold text-green-300">🔮 Seer</span>
-                    <p className="text-sm text-gray-400">Can investigate one player each night to learn if they are a Werewolf or not.</p>
-                  </div>
-                  <div>
-                    <span className="font-bold text-green-300">🛡️ Bodyguard</span>
-                    <p className="text-sm text-gray-400">Can protect one player each night. If the protected player is attacked, the Bodyguard may die instead.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Special Features */}
-        <Card className="bg-gray-800/80 border-purple-500/50 mb-6">
-          <CardHeader>
-            <CardTitle className="text-2xl text-purple-300 flex items-center gap-2">
-              ⚡ Special Features
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-gray-300 space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 bg-cyan-900/30 rounded-lg border border-cyan-500/50">
-                <h3 className="font-bold text-cyan-300 mb-2">🛡️ One-Time Shield</h3>
-                <p className="text-sm">Every player starts with a single-use shield. Activate it at night to protect yourself from any attack. Use it wisely - it's gone forever once used!</p>
-              </div>
-              <div className="p-4 bg-yellow-900/30 rounded-lg border border-yellow-500/50">
-                <h3 className="font-bold text-yellow-300 mb-2">⚡ Lightning Strike</h3>
-                <p className="text-sm">Stay active! Players who don't participate in the night chat may be struck by lightning and eliminated. Type at least 3 words every few seconds to stay safe.</p>
-              </div>
-              <div className="p-4 bg-purple-900/30 rounded-lg border border-purple-500/50">
-                <h3 className="font-bold text-purple-300 mb-2">🔀 Message Scrambling</h3>
-                <p className="text-sm">During night, Villager messages are scrambled. Only Werewolves can communicate clearly with each other.</p>
-              </div>
-              <div className="p-4 bg-blue-900/30 rounded-lg border border-blue-500/50">
-                <h3 className="font-bold text-blue-300 mb-2">👻 Spirit Vision</h3>
-                <p className="text-sm">If you're eliminated, you become a spirit. You can see who the Werewolves are and watch the game unfold!</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tips */}
-        <Card className="bg-gray-800/80 border-purple-500/50 mb-6">
-          <CardHeader>
-            <CardTitle className="text-2xl text-purple-300 flex items-center gap-2">
-              💡 Pro Tips
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-gray-300">
-            <ul className="space-y-2">
-              <li className="flex items-start gap-2">
-                <span className="text-green-400">✓</span>
-                <span><strong>For Villagers:</strong> Pay attention to who defends whom. Werewolves often protect each other.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-400">✓</span>
-                <span><strong>For Werewolves:</strong> Don't always agree with each other. It's suspicious!</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-400">✓</span>
-                <span><strong>For Seers:</strong> Be careful about revealing your role too early. Werewolves will target you!</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-400">✓</span>
-                <span><strong>For Everyone:</strong> Watch voting patterns. They reveal alliances.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-400">✓</span>
-                <span><strong>Save your shield</strong> for when you suspect you're being targeted!</span>
-              </li>
+      {/* Game Phases */}
+      <Card className="panel-stone border-iron-gray/60 mb-6">
+        <CardHeader>
+          <CardTitle className="font-cinzel text-xl text-ember">Game Phases</CardTitle>
+        </CardHeader>
+        <CardContent className="text-parchment/70 space-y-5">
+          <div className="p-4 bg-[#0a0f1e]/40 rounded border border-[#1e2a4a]/60">
+            <h3 className="font-cinzel text-sm uppercase tracking-wider text-[#8ba7d4] mb-3">Night Phase</h3>
+            <ul className="space-y-1.5 text-sm text-parchment/60">
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span><strong className="text-parchment/80">Werewolves</strong> secretly communicate and choose a Villager to eliminate</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span><strong className="text-parchment/80">Doctor</strong> (if in game) chooses someone to protect from the Werewolf attack</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span><strong className="text-parchment/80">Seer</strong> (if in game) investigates one player to learn their true role</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>Villagers must chat to avoid being struck by lightning (anti-AFK)</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>All players can activate their one-time shield for protection</span></li>
             </ul>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* CTA */}
-        <div className="text-center mt-8">
-          <Link
-            href="/"
-            className="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors"
-          >
-            🎮 Start Playing Now
-          </Link>
-        </div>
-      </main>
+          <div className="p-4 bg-ember/5 rounded border border-ember/20">
+            <h3 className="font-cinzel text-sm uppercase tracking-wider text-ember mb-3">Day Phase</h3>
+            <ul className="space-y-1.5 text-sm text-parchment/60">
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>The village awakens and discovers who was eliminated overnight</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>Players discuss verbally (via voice chat, video call, or in person)</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>Werewolves try to blend in and deflect suspicion</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>Villagers share information and try to identify the wolves</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>No in-game chat during the day — use your voice!</span></li>
+            </ul>
+          </div>
 
-      <Footer />
-    </div>
+          <div className="p-4 bg-blood/10 rounded border border-blood/25">
+            <h3 className="font-cinzel text-sm uppercase tracking-wider text-blood mb-3">Voting Phase</h3>
+            <ul className="space-y-1.5 text-sm text-parchment/60">
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>Each player votes to eliminate one suspect</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>Votes are secret until everyone has voted</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>The player with the most votes is eliminated</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>If there's a tie, no one is eliminated</span></li>
+              <li className="flex gap-2"><span className="text-ember flex-shrink-0">—</span><span>After voting, the cycle returns to Night</span></li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Roles */}
+      <Card className="panel-stone border-iron-gray/60 mb-6">
+        <CardHeader>
+          <CardTitle className="font-cinzel text-xl text-ember">Roles</CardTitle>
+        </CardHeader>
+        <CardContent className="text-parchment/70 space-y-4">
+          <div className="p-4 bg-blood/8 rounded border border-blood/25">
+            <h3 className="font-cinzel text-xs uppercase tracking-wider text-blood mb-3">Evil Team</h3>
+            <div className="space-y-3">
+              <div>
+                <span className="font-bold text-parchment text-sm">Werewolf</span>
+                <p className="text-xs text-parchment/50 mt-0.5">Hunts Villagers at night. Knows who other Werewolves are. Must blend in during the day.</p>
+              </div>
+              <div className="border-t border-iron-gray/30 pt-3">
+                <span className="font-bold text-parchment text-sm">Minion</span>
+                <p className="text-xs text-parchment/50 mt-0.5">Knows who the Werewolves are but appears as a Villager. Wins with the Werewolves.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 bg-iron-gray/15 rounded border border-parchment/10">
+            <h3 className="font-cinzel text-xs uppercase tracking-wider text-parchment mb-3">Village Team</h3>
+            <div className="space-y-3">
+              {[
+                { role: 'Villager', desc: 'A regular village member with no special powers. Must use wit and observation to survive.' },
+                { role: 'Doctor', desc: 'Can protect one player each night from being killed. Cannot protect the same player twice in a row.' },
+                { role: 'Seer', desc: 'Can investigate one player each night to learn if they are a Werewolf or not.' },
+                { role: 'Bodyguard', desc: 'Can protect one player each night. If the protected player is attacked, the Bodyguard may die instead.' },
+              ].map((item, i) => (
+                <div key={item.role} className={i > 0 ? 'border-t border-iron-gray/30 pt-3' : ''}>
+                  <span className="font-bold text-parchment text-sm">{item.role}</span>
+                  <p className="text-xs text-parchment/50 mt-0.5">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Special Features */}
+      <Card className="panel-stone border-iron-gray/60 mb-6">
+        <CardHeader>
+          <CardTitle className="font-cinzel text-xl text-ember">Special Features</CardTitle>
+        </CardHeader>
+        <CardContent className="text-parchment/70">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-4 bg-ember/5 rounded border border-ember/25">
+              <h3 className="font-cinzel text-xs uppercase tracking-wider text-ember mb-2">One-Time Shield</h3>
+              <p className="text-sm text-parchment/60">Every player starts with a single-use shield. Activate it at night to protect yourself from any attack. Use it wisely — it's gone forever once used!</p>
+            </div>
+            <div className="p-4 bg-iron-gray/20 rounded border border-parchment/10">
+              <h3 className="font-cinzel text-xs uppercase tracking-wider text-parchment mb-2">Lightning Strike</h3>
+              <p className="text-sm text-parchment/60">Stay active! Players who don't participate in the night chat may be struck by lightning and eliminated. Type at least 3 words every few seconds to stay safe.</p>
+            </div>
+            <div className="p-4 bg-iron-gray/20 rounded border border-parchment/10">
+              <h3 className="font-cinzel text-xs uppercase tracking-wider text-parchment mb-2">Message Scrambling</h3>
+              <p className="text-sm text-parchment/60">During night, Villager messages are scrambled. Only Werewolves can communicate clearly with each other.</p>
+            </div>
+            <div className="p-4 bg-ember/5 rounded border border-ember/25">
+              <h3 className="font-cinzel text-xs uppercase tracking-wider text-ember mb-2">Spirit Vision</h3>
+              <p className="text-sm text-parchment/60">If you're eliminated, you become a spirit. You can see who the Werewolves are and watch the game unfold!</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Tips */}
+      <Card className="panel-stone border-iron-gray/60 mb-8">
+        <CardHeader>
+          <CardTitle className="font-cinzel text-xl text-ember">Pro Tips</CardTitle>
+        </CardHeader>
+        <CardContent className="text-parchment/70">
+          <ul className="space-y-3">
+            {[
+              { tip: 'For Villagers', detail: 'Pay attention to who defends whom. Werewolves often protect each other.' },
+              { tip: 'For Werewolves', detail: "Don't always agree with each other. It's suspicious!" },
+              { tip: 'For Seers', detail: 'Be careful about revealing your role too early. Werewolves will target you!' },
+              { tip: 'For Everyone', detail: 'Watch voting patterns. They reveal alliances.' },
+              { tip: 'Save your shield', detail: 'For when you suspect you\'re being targeted!' },
+            ].map((item) => (
+              <li key={item.tip} className="flex items-start gap-3 pb-3 border-b border-iron-gray/25 last:border-0 last:pb-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-ember mt-2 flex-shrink-0" />
+                <span className="text-sm">
+                  <strong className="text-parchment">{item.tip}:</strong>{' '}
+                  <span className="text-parchment/60">{item.detail}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      <div className="text-center pb-8">
+        <Link href="/">
+          <Button className="btn-ember py-4 px-10 text-lg rounded font-bold">
+            Enter the Village
+          </Button>
+        </Link>
+      </div>
+    </PageLayout>
   );
 }
