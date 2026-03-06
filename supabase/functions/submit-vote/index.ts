@@ -62,6 +62,28 @@ serve(async (req) => {
       )
     }
 
+    // Validate targetId belongs to this game and is alive
+    const { data: targetPlayer } = await supabase
+      .from('players')
+      .select('is_alive')
+      .eq('player_id', targetId)
+      .eq('game_id', game.id)
+      .single()
+
+    if (!targetPlayer) {
+      return new Response(
+        JSON.stringify({ error: 'Target player not found in this game' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (!targetPlayer.is_alive) {
+      return new Response(
+        JSON.stringify({ error: 'Cannot vote against a dead player' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Check if vote already exists
     const { data: existing } = await supabase
       .from('votes')

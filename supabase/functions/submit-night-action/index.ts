@@ -79,6 +79,30 @@ serve(async (req) => {
       )
     }
 
+    // Validate targetId belongs to this game (if provided)
+    if (targetId) {
+      const { data: targetPlayer } = await supabase
+        .from('players')
+        .select('is_alive')
+        .eq('player_id', targetId)
+        .eq('game_id', game.id)
+        .single()
+
+      if (!targetPlayer) {
+        return new Response(
+          JSON.stringify({ error: 'Target player not found in this game' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      if (!targetPlayer.is_alive) {
+        return new Response(
+          JSON.stringify({ error: 'Cannot target a dead player' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+    }
+
     // Check if action already exists
     const { data: existing } = await supabase
       .from('night_actions')

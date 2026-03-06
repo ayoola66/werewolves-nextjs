@@ -129,6 +129,8 @@ serve(async (req) => {
     }
 
     // Create chat message
+    // Note: original_message is intentionally NOT stored to prevent clients
+    // from reading unscrambled night chat via the anon key.
     await supabase
       .from('chat_messages')
       .insert({
@@ -136,7 +138,6 @@ serve(async (req) => {
         player_id: playerId,
         player_name: player.name,
         message: messageType === 'scrambled' ? scrambledMessage : message,
-        original_message: messageType === 'scrambled' ? message : null,
         type: messageType
       })
 

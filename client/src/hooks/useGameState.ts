@@ -122,9 +122,7 @@ export function useGameState() {
               playerId: newMsg.player_id,
               playerName: newMsg.player_name,
               message: newMsg.message,
-              originalMessage: isWerewolfPlayer
-                ? newMsg.original_message
-                : null,
+              originalMessage: null,
               type: newMsg.type,
               createdAt: newMsg.created_at,
             };
@@ -303,9 +301,6 @@ export function useGameState() {
         if (game && players && Array.isArray(players)) {
           const alivePlayers = players.filter((p) => p.is_alive);
           const deadPlayers = players.filter((p) => !p.is_alive);
-          const isCurrentPlayerWerewolf =
-            players.find((p) => p.player_id === playerId)?.role === 'werewolf';
-
           setGameState({
             game: {
               id: game.id,
@@ -389,7 +384,7 @@ export function useGameState() {
               playerId: m.player_id,
               playerName: m.player_name,
               message: m.message,
-              originalMessage: isCurrentPlayerWerewolf ? m.original_message : null,
+              originalMessage: null,
               type: m.type,
               createdAt: m.created_at,
             })) : [],
