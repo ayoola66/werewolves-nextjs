@@ -8,10 +8,18 @@ serve(async (req) => {
 
   try {
     const { gameCode, playerName } = await req.json() as { gameCode: string; playerName: string }
-    
+
     if (!gameCode || !playerName) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const trimmedName = playerName.trim()
+    if (trimmedName.length === 0 || trimmedName.length > 30) {
+      return new Response(
+        JSON.stringify({ error: 'Player name must be between 1 and 30 characters' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -39,21 +47,28 @@ serve(async (req) => {
       )
     }
 
-    // Check if name is taken
+    // Check player count and name availability
     const { data: existingPlayers } = await supabase
       .from('players')
       .select('name')
       .eq('game_id', game.id)
 
-    if (existingPlayers?.some(p => p.name.toLowerCase() === playerName.toLowerCase())) {
+    if (existingPlayers && existingPlayers.length >= 20) {
+      return new Response(
+        JSON.stringify({ error: 'Game is full (maximum 20 players)' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (existingPlayers?.some(p => p.name.toLowerCase() === trimmedName.toLowerCase())) {
       return new Response(
         JSON.stringify({ error: 'Name already taken' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Generate a unique player_id
-    const playerId = `player_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+    // Generate a cryptographically secure player ID
+    const playerId = crypto.randomUUID()
 
     // Create player
     const { data: player, error: playerError } = await supabase
@@ -61,7 +76,7 @@ serve(async (req) => {
       .insert({
         game_id: game.id,
         player_id: playerId,
-        name: playerName,
+        name: trimmedName,
         is_host: false,
         is_alive: true
       })
@@ -75,7 +90,7 @@ serve(async (req) => {
       .from('chat_messages')
       .insert({
         game_id: game.id,
-        message: `👋 ${playerName} joined the game`,
+        message: `👋 ${trimmedName} joined the game`,
         type: 'system'
       })
 
@@ -89,8 +104,9 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
+    console.error('join-game error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'An internal error occurred. Please try again.' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

@@ -54,6 +54,13 @@ serve(async (req) => {
       )
     }
 
+    if (message.length > 500) {
+      return new Response(
+        JSON.stringify({ error: 'Message must be 500 characters or fewer' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const supabase = createSupabaseClient(req)
 
     // Find game by game_code
@@ -146,8 +153,9 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
+    console.error('send-chat error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'An internal error occurred. Please try again.' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

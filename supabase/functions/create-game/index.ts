@@ -11,20 +11,28 @@ serve(async (req) => {
     const { playerName, hostName, settings } = await req.json() as { playerName?: string; hostName?: string; settings: GameSettings }
     
     // Support both playerName and hostName for backwards compatibility
-    const name = playerName || hostName
-    
-    if (!name || !settings) {
+    const rawName = playerName || hostName
+
+    if (!rawName || !settings) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields: playerName and settings' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
+    const name = rawName.trim()
+    if (name.length === 0 || name.length > 30) {
+      return new Response(
+        JSON.stringify({ error: 'Player name must be between 1 and 30 characters' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const supabase = createSupabaseClient(req)
     const gameCode = generateGameCode()
-    
-    // Generate a unique player_id first (needed for host_id)
-    const playerId = `player_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+    // Generate a cryptographically secure player ID
+    const playerId = crypto.randomUUID()
 
     // Create game
     const { data: game, error: gameError } = await supabase
@@ -78,8 +86,9 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
+    console.error('create-game error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'An internal error occurred. Please try again.' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

@@ -62,21 +62,26 @@ serve(async (req) => {
       )
     }
 
-    // Validate role can perform this action
-    const roleActionMap: Record<string, string[]> = {
-      werewolf: ['kill'],
-      doctor: ['save', 'protect'],
-      seer: ['investigate'],
-      bodyguard: ['protect'],
-      witch: ['save', 'poison']
-    }
+    // Utility actions any alive player can submit (no role restriction)
+    const utilityActions = ['end_night', 'skip_shield']
 
-    const allowedActions = roleActionMap[player.role || ''] || []
-    if (!allowedActions.includes(action)) {
-      return new Response(
-        JSON.stringify({ error: `Role '${player.role}' cannot perform action '${action}'. Allowed actions: ${allowedActions.join(', ')}` }),
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+    if (!utilityActions.includes(action)) {
+      // Validate role can perform this action
+      const roleActionMap: Record<string, string[]> = {
+        werewolf: ['kill'],
+        doctor: ['save', 'protect'],
+        seer: ['investigate'],
+        bodyguard: ['protect'],
+        witch: ['save', 'poison']
+      }
+
+      const allowedActions = roleActionMap[player.role || ''] || []
+      if (!allowedActions.includes(action)) {
+        return new Response(
+          JSON.stringify({ error: `Your role cannot perform that action` }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
     }
 
     // Validate targetId belongs to this game (if provided)
@@ -135,8 +140,9 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
+    console.error('submit-night-action error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'An internal error occurred. Please try again.' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
