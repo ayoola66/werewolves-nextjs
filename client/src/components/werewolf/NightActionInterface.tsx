@@ -44,12 +44,18 @@ export default function NightActionInterface({
   useEffect(() => {
     if (currentPlayerAction) {
       setHasActed(true);
+    } else {
+      setHasActed(false); // Reset when night actions are cleared for new night
     }
     if (shieldActionThisNight) {
       setShieldActivated(true);
+    } else {
+      setShieldActivated(false); // Reset when night actions are cleared for new night
     }
     if (endNightAction) {
       setHasEndedNight(true);
+    } else {
+      setHasEndedNight(false); // Reset when night actions are cleared for new night
     }
   }, [currentPlayerAction, shieldActionThisNight, endNightAction]);
   

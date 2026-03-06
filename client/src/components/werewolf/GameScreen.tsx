@@ -106,7 +106,7 @@ export default function GameScreen({ gameState }: GameScreenProps) {
       game.game?.currentPhase || game.game?.phase || game.phase;
 
     // Set theme based on phase
-    if (currentPhase === "night") {
+    if (currentPhase === "night" || currentPhase === "role_reveal") {
       setTheme("dark");
     } else {
       setTheme("light");
@@ -167,6 +167,13 @@ export default function GameScreen({ gameState }: GameScreenProps) {
     const dayCount = game?.game?.dayCount || game?.dayCount || 1;
 
     switch (currentPhase) {
+      case "role_reveal":
+        return {
+          title: "Roles Revealed",
+          subtitle: "Remember your role before night falls...",
+          color: "text-purple-400",
+          bgColor: "bg-gray-900",
+        };
       case "night":
         return {
           title: `Night ${nightCount}`,

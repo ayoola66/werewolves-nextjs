@@ -473,7 +473,8 @@ export function useGameState() {
       currentPhase !== "night" &&
       currentPhase !== "voting" &&
       currentPhase !== "voting_results" &&
-      currentPhase !== "role_reveal"
+      currentPhase !== "role_reveal" &&
+      currentPhase !== "day"
     ) {
       return;
     }
@@ -594,6 +595,36 @@ export function useGameState() {
               });
             } else {
               // Refresh game state after processing
+              await fetchGameState(gameState.game.gameCode);
+            }
+          } else if (currentPhase === "day") {
+            // Auto-start voting when day timer expires (no one clicked "Start Voting Now")
+            const response = await fetch(
+              `/api/start-voting`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${
+                    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+                  }`,
+                },
+                body: JSON.stringify({
+                  gameCode: gameState.game.gameCode,
+                  playerId,
+                }),
+              }
+            );
+
+            const data = await response.json();
+            if (data.error) {
+              console.error("Error auto-starting voting:", data.error);
+              logError(data.error, {
+                source: "edge-function",
+                functionName: "start-voting",
+                gameCode: gameState.game.gameCode,
+              });
+            } else {
               await fetchGameState(gameState.game.gameCode);
             }
           } else if (currentPhase === "voting_results") {
