@@ -402,6 +402,7 @@ export function useGameState() {
           if ((game.current_phase || game.phase) === "game_over") {
             setShowGameOverOverlay(true);
           }
+          return game.status; // Allow callers to route based on actual game status
         }
       } catch (error: any) {
         logError(error.message || "Failed to fetch game state", {
@@ -438,12 +439,21 @@ export function useGameState() {
     }
   }, []);
 
-  // Once playerId and pendingGameCode are set, fetch state and restore game screen
+  // Once playerId and pendingGameCode are set, fetch state and restore correct screen
   useEffect(() => {
     if (!pendingGameCode || !playerId) return;
+    const code = pendingGameCode;
     setPendingGameCode(null);
-    fetchGameState(pendingGameCode)
-      .then(() => setCurrentScreen('game'))
+    fetchGameState(code)
+      .then((status) => {
+        if (!status || status === 'finished') {
+          // Game ended or not found — clear stale session, stay on home
+          localStorage.removeItem('werewolves_session');
+          return;
+        }
+        // Route to lobby if still waiting, game screen if already playing
+        setCurrentScreen(status === 'playing' ? 'game' : 'lobby');
+      })
       .catch(() => localStorage.removeItem('werewolves_session'));
   }, [pendingGameCode, playerId, fetchGameState]);
 
