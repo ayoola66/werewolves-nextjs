@@ -81,6 +81,16 @@ serve(async (req) => {
       )
     }
 
+    // Guard: reject if the night timer has not yet expired.
+    // This prevents clients that just triggered role_reveal→night from
+    // immediately calling again and processing night→day before the timer runs.
+    if (game.phase_end_time && new Date(game.phase_end_time) > new Date()) {
+      return new Response(
+        JSON.stringify({ success: true, alreadyProcessed: true, message: 'Night timer still running' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // ATOMIC LOCK for night processing.
     // Transitions phase to 'processing' only if it is still 'night'.
     // Any concurrent caller that arrives after us will read 'processing' and bail out above.

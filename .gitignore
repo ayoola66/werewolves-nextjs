@@ -36,3 +36,4 @@ yarn-error.log*
 
 # Backups (prevent submodule issues)
 backups/
+.vercel
