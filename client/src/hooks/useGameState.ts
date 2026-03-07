@@ -136,7 +136,12 @@ export function useGameState() {
           });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        // On reconnect, immediately resync to recover any missed events
+        if (status === 'SUBSCRIBED' && fetchGameStateRef.current && gameState?.game?.gameCode) {
+          fetchGameStateRef.current(gameState.game.gameCode);
+        }
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -487,16 +492,21 @@ export function useGameState() {
     return () => clearInterval(interval);
   }, [currentScreen, gameState?.game?.gameCode, fetchGameState]);
 
-  // Game-over polling — catches missed Realtime game_over/finished events during active game
+  // Phase-end polling — catches missed Realtime events in the final 15s of each phase.
+  // Only fires when a phase is near its end, not continuously during gameplay.
   useEffect(() => {
     if (currentScreen !== 'game' || !gameState?.game?.gameCode) return;
+    const phaseEndTime = gameState.game.phaseEndTime;
+    if (!phaseEndTime) return;
+    const msUntilEnd = new Date(phaseEndTime).getTime() - Date.now();
+    if (msUntilEnd > 15_000) return; // phase not near ending — don't poll yet
     const interval = setInterval(async () => {
       if (fetchGameStateRef.current) {
         await fetchGameStateRef.current(gameState.game.gameCode);
       }
     }, 3000);
     return () => clearInterval(interval);
-  }, [currentScreen, gameState?.game?.gameCode]);
+  }, [currentScreen, gameState?.game?.gameCode, gameState?.game?.phaseEndTime]);
 
   // Phase timer checking - automatically transition phases when timer expires
   useEffect(() => {
