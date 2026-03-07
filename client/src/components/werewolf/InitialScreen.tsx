@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,18 @@ export default function InitialScreen({ gameState }: InitialScreenProps) {
   const [playerName, setPlayerName] = useState('');
   const [gameCode, setGameCode] = useState('');
   const { getNewErrorsCount } = useErrorLog();
+
+  // Pre-fill game code and open join form when ?join=CODE is in the URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const joinCode = params.get('join');
+    if (joinCode) {
+      setGameCode(joinCode.toUpperCase().slice(0, 6));
+      setShowJoinForm(true);
+      // Clean the URL so refreshing doesn't re-trigger
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
   const newErrorsCount = getNewErrorsCount();
 
   const handleCreateGame = () => {

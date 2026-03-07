@@ -17,18 +17,19 @@ export default function Lobby({ gameState }: LobbyProps) {
 
   const copyGameCode = async () => {
     if (game?.game.gameCode) {
+      const inviteUrl = `${window.location.origin}/?join=${game.game.gameCode}`;
       try {
-        await navigator.clipboard.writeText(game.game.gameCode);
+        await navigator.clipboard.writeText(inviteUrl);
         setCopied(true);
         toast({
-          title: "Copied!",
-          description: "Game code copied to clipboard",
+          title: "Invite link copied!",
+          description: "Share this link — recipients go straight to the join screen",
         });
         setTimeout(() => setCopied(false), 2000);
       } catch (err) {
         toast({
           title: "Failed to copy",
-          description: "Could not copy game code",
+          description: "Could not copy invite link",
           variant: "destructive",
         });
       }
