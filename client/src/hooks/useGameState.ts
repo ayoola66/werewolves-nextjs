@@ -424,10 +424,10 @@ export function useGameState() {
     fetchGameStateRef.current = fetchGameState;
   }, [fetchGameState]);
 
-  // On mount: restore session from localStorage so a page refresh auto-rejoins
+  // On mount: restore session from sessionStorage so a page refresh auto-rejoins
   useEffect(() => {
     try {
-      const raw = localStorage.getItem('werewolves_session');
+      const raw = sessionStorage.getItem('werewolves_session');
       if (!raw) return;
       const { playerId: savedId, gameCode: savedCode, playerName: savedName } = JSON.parse(raw);
       if (!savedId || !savedCode || !savedName) return;
@@ -435,7 +435,7 @@ export function useGameState() {
       setPlayerName(savedName);
       setPendingGameCode(savedCode);
     } catch {
-      localStorage.removeItem('werewolves_session');
+      sessionStorage.removeItem('werewolves_session');
     }
   }, []);
 
@@ -448,13 +448,13 @@ export function useGameState() {
       .then((status) => {
         if (!status || status === 'finished') {
           // Game ended or not found — clear stale session, stay on home
-          localStorage.removeItem('werewolves_session');
+          sessionStorage.removeItem('werewolves_session');
           return;
         }
         // Route to lobby if still waiting, game screen if already playing
         setCurrentScreen(status === 'playing' ? 'game' : 'lobby');
       })
-      .catch(() => localStorage.removeItem('werewolves_session'));
+      .catch(() => sessionStorage.removeItem('werewolves_session'));
   }, [pendingGameCode, playerId, fetchGameState]);
 
   // Reset night action flag at the start of each night phase
@@ -706,7 +706,7 @@ export function useGameState() {
         );
 
         setPlayerId(data.playerId);
-        localStorage.setItem('werewolves_session', JSON.stringify({
+        sessionStorage.setItem('werewolves_session', JSON.stringify({
           playerId: data.playerId,
           gameCode: data.gameCode,
           playerName: name,
@@ -749,7 +749,7 @@ export function useGameState() {
         );
 
         setPlayerId(data.playerId);
-        localStorage.setItem('werewolves_session', JSON.stringify({
+        sessionStorage.setItem('werewolves_session', JSON.stringify({
           playerId: data.playerId,
           gameCode: gameCode.toUpperCase(),
           playerName: name,
@@ -1042,7 +1042,7 @@ export function useGameState() {
       // Clean up state
       setGameState(null);
       setPlayerId(null);
-      localStorage.removeItem('werewolves_session');
+      sessionStorage.removeItem('werewolves_session');
       setCurrentScreen("initial");
       setShowRoleReveal(false);
       setShowVoteOverlay(false);
@@ -1074,7 +1074,7 @@ export function useGameState() {
   const clearGameState = useCallback(() => {
     setGameState(null);
     setPlayerId(null);
-    localStorage.removeItem('werewolves_session');
+    sessionStorage.removeItem('werewolves_session');
     setPlayerName("");
     setCurrentScreen("initial");
     setSelectedPlayer(null);
