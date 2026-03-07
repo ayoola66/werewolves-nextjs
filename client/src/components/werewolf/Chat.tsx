@@ -37,6 +37,7 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
   const isNightPhase = currentPhase === "night";
   const currentPlayer = gameState?.getCurrentPlayer?.();
   const isAlive = currentPlayer?.isAlive;
+  const grandWizardMode = game?.game?.settings?.grandWizardMode ?? false;
 
   // Count words in a string
   const countWords = useCallback((text: string): number => {
@@ -61,8 +62,8 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
 
   // Reset word counter every 5 seconds and check for violations
   useEffect(() => {
-    // Only apply anti-AFK rule during night phase for alive players chatting in village channel
-    if (!isNightPhase || !isAlive || channel !== "player") {
+    // Only apply anti-AFK rule when lightning mode is on, during night, for alive village-channel players
+    if (!grandWizardMode || !isNightPhase || !isAlive || channel !== "player") {
       // Clear any existing interval
       if (typingIntervalRef.current) {
         clearInterval(typingIntervalRef.current);
@@ -184,8 +185,8 @@ export default function Chat({ gameState, channel = "player" }: ChatProps) {
     chatSubtitle = "Chat disabled during voting";
   }
 
-  // Show anti-AFK warning during night phase
-  const showTypingRequirement = isNightPhase && isAlive && channel === "player";
+  // Show anti-AFK warning only when lightning mode is active
+  const showTypingRequirement = grandWizardMode && isNightPhase && isAlive && channel === "player";
   const wordsNeeded = MIN_WORDS_REQUIRED - wordsSentInWindow;
 
   return (

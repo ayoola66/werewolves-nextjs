@@ -192,7 +192,7 @@ export default function GameScreen({ gameState }: GameScreenProps) {
         return {
           title: "Voting Phase",
           subtitle: "Vote to eliminate a player",
-          color: "text-red-400",
+          color: "text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]",
           bgColor: "bg-gray-100",
         };
       case "voting_results":
@@ -204,8 +204,8 @@ export default function GameScreen({ gameState }: GameScreenProps) {
         };
       default:
         return {
-          title: "Game Phase",
-          subtitle: "",
+          title: "Connecting...",
+          subtitle: "Syncing game state",
           color: "text-gray-400",
           bgColor: "bg-gray-100",
         };
@@ -459,7 +459,8 @@ export default function GameScreen({ gameState }: GameScreenProps) {
                 {(game?.game?.currentPhase === "day" ||
                   game?.game?.phase === "day" ||
                   game?.phase === "day") &&
-                  gameState.getCurrentPlayer()?.isAlive && (
+                  gameState.getCurrentPlayer()?.isAlive &&
+                  gameState.getCurrentPlayer()?.isHost && (
                     <div className="mt-4 flex justify-center">
                       <Button
                         onClick={async () => {

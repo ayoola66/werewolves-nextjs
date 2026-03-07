@@ -26,6 +26,9 @@ export function useGameState() {
   const lastFetchRef = useRef<number>(0);
   const DEBOUNCE_MS = 500;
 
+  // Guard to prevent concurrent/duplicate phase transition calls (stale closure fix)
+  const isProcessingPhaseRef = useRef(false);
+
   // Define fetchGameState first so it can be used in the debounced version
   const fetchGameStateRef = useRef<(gameCode: string) => Promise<void>>();
 
@@ -457,13 +460,30 @@ export function useGameState() {
       .catch(() => sessionStorage.removeItem('werewolves_session'));
   }, [pendingGameCode, playerId, fetchGameState]);
 
-  // Reset night action flag at the start of each night phase
+  // Reset night action flag and processing guard at phase changes
   useEffect(() => {
     const currentPhase = gameState?.game?.currentPhase || gameState?.game?.phase || gameState?.phase;
     if (currentPhase === 'night') {
       setHasPerformedNightAction(false);
     }
+    // Reset processing guard whenever phase changes so the next transition can proceed
+    isProcessingPhaseRef.current = false;
   }, [gameState?.game?.currentPhase, gameState?.game?.phase, gameState?.phase]);
+
+  // Lobby polling fallback — catches missed Realtime events (e.g. slow subscription setup)
+  useEffect(() => {
+    if (currentScreen !== 'lobby' || !gameState?.game?.gameCode) return;
+
+    const interval = setInterval(async () => {
+      const status = await fetchGameState(gameState.game.gameCode);
+      if (status === 'playing') {
+        setCurrentScreen('game');
+        setShowRoleReveal(true);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [currentScreen, gameState?.game?.gameCode, fetchGameState]);
 
   // Phase timer checking - automatically transition phases when timer expires
   useEffect(() => {
@@ -495,6 +515,10 @@ export function useGameState() {
 
       // If timer has expired, call appropriate process function
       if (now >= endTime) {
+        // Guard: prevent concurrent calls from stale closures or parallel clients
+        if (isProcessingPhaseRef.current) return;
+        isProcessingPhaseRef.current = true;
+
         try {
           if (currentPhase === "night") {
             // Process night actions
@@ -674,6 +698,8 @@ export function useGameState() {
             functionName: "phase-timer-check",
             gameCode: gameState.game.gameCode,
           });
+        } finally {
+          isProcessingPhaseRef.current = false;
         }
       }
     };

@@ -16,14 +16,26 @@ export default function EliminatedOverlay({ gameState, onContinueWatching }: Eli
   const getEliminationMessage = () => {
     const game = gameState.gameState;
     const currentPhase = game?.game?.currentPhase || game?.phase;
-    
-    // If we're coming from voting_results, they were voted out
-    // If we're coming from night/day transition, they were killed by werewolves
-    if (currentPhase === 'day' || currentPhase === 'voting_results') {
+
+    if (currentPhase === 'voting_results') {
       return {
         title: '⚖️ You Have Been Eliminated',
         subtitle: 'The village has spoken...',
         description: 'You were voted out by the village.',
+        bgGradient: 'from-orange-950 via-red-950 to-black',
+      };
+    } else if (currentPhase === 'voting') {
+      return {
+        title: '⚡ Struck by Lightning',
+        subtitle: 'The Grand Wizard does not tolerate silence...',
+        description: 'You were eliminated by the Grand Wizard for failing to participate.',
+        bgGradient: 'from-yellow-950 via-gray-950 to-black',
+      };
+    } else if (currentPhase === 'day') {
+      return {
+        title: '⚖️ You Have Been Eliminated',
+        subtitle: 'The village has spoken...',
+        description: 'You were removed from the game.',
         bgGradient: 'from-orange-950 via-red-950 to-black',
       };
     } else {

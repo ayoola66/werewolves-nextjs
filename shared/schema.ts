@@ -95,6 +95,8 @@ export const gameSettingsSchema = z.object({
   bodyguard: z.boolean().default(false),
   sheriff: z.boolean().default(false),
   seerInvestigations: z.number().min(1).max(20).optional(),
+  voteDuration: z.number().min(30).max(600).default(120),
+  grandWizardMode: z.boolean().default(false),
 });
 
 export type GameSettings = z.infer<typeof gameSettingsSchema>;

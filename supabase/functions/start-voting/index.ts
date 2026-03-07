@@ -70,8 +70,8 @@ serve(async (req) => {
       )
     }
 
-    // Get vote duration from settings or use default (300 seconds = 5 minutes)
-    const voteDuration = game.settings?.voteDuration || game.settings?.dayDuration || 300
+    // Get vote duration from settings or use default (120 seconds = 2 minutes)
+    const voteDuration = game.settings?.voteDuration || game.settings?.dayDuration || 120
     const phaseEndTime = new Date(Date.now() + voteDuration * 1000).toISOString()
 
     // Transition to voting phase

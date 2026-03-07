@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { GameSettings as GameSettingsType } from '@/lib/gameTypes';
-import { ArrowLeft, Shield, Eye, Heart, Skull, Ghost, Target, Sparkles, Users, Crown } from 'lucide-react';
+import { ArrowLeft, Shield, Eye, Heart, Skull, Ghost, Target, Sparkles, Users, Crown, Zap, Clock } from 'lucide-react';
 
 interface GameSettingsProps {
   gameState: any;
@@ -34,7 +34,9 @@ export default function GameSettings({ gameState }: GameSettingsProps) {
     witch: false,
     bodyguard: false,
     sheriff: false,
-    seerInvestigations: undefined
+    seerInvestigations: undefined,
+    voteDuration: 120,
+    grandWizardMode: false,
   });
 
   const handleCreateLobby = () => {
@@ -159,6 +161,48 @@ export default function GameSettings({ gameState }: GameSettingsProps) {
               max={20}
               placeholder="Auto"
               className="w-24 mt-3 text-center self-end"
+            />
+          </div>
+
+          {/* Vote Duration */}
+          <div className="bg-iron-gray/20 border border-iron-gray/30 p-4 rounded flex flex-col justify-between">
+            <div className="flex items-start gap-3">
+              <Clock className="w-5 h-5 text-amber-400 mt-1" />
+              <div>
+                <h3 className="font-bold text-lg text-parchment">Vote Duration</h3>
+                <p className="text-sm text-parchment/60 mt-1">Seconds players have to vote. Default: 120s.</p>
+              </div>
+            </div>
+            <Input
+              type="number"
+              value={settings.voteDuration ?? 120}
+              onChange={(e) => setSettings(prev => ({ ...prev, voteDuration: Math.max(30, Math.min(600, parseInt(e.target.value) || 120)) }))}
+              min={30}
+              max={600}
+              className="w-24 mt-3 text-center self-end"
+            />
+          </div>
+
+          {/* Lightning Chat Mode — Advanced Feature */}
+          <div className={`p-4 rounded flex justify-between items-start transition-all ${
+            settings.grandWizardMode
+              ? 'bg-yellow-900/30 border border-yellow-500/50'
+              : 'bg-iron-gray/20 border border-iron-gray/30'
+          }`}>
+            <div className="flex items-start gap-3">
+              <Zap className={`w-5 h-5 mt-1 ${settings.grandWizardMode ? 'text-yellow-400' : 'text-parchment/40'}`} />
+              <div>
+                <h3 className="font-bold text-parchment">Grand Wizard Mode</h3>
+                <p className="text-xs text-yellow-400/80 font-semibold mt-0.5">Advanced Feature</p>
+                <p className="text-sm text-parchment/50 mt-1">Players must type 3 words every 5s at night or be eliminated. Disable for testing.</p>
+              </div>
+            </div>
+            <Switch
+              checked={settings.grandWizardMode ?? false}
+              onCheckedChange={(checked) =>
+                setSettings(prev => ({ ...prev, grandWizardMode: checked }))
+              }
+              className="flex-shrink-0 ml-4"
             />
           </div>
 
