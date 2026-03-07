@@ -137,11 +137,8 @@ serve(async (req) => {
         })
     }
 
-    // Clear votes
-    await supabase
-      .from('votes')
-      .delete()
-      .eq('game_id', game.id)
+    // NOTE: votes are NOT deleted here — they are kept until transition-to-night
+    // so the voting_results phase can display the full tally to all players.
 
     // Check win condition
     const { data: alivePlayers } = await supabase

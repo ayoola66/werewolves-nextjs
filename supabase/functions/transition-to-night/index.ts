@@ -89,6 +89,12 @@ serve(async (req) => {
       )
     }
 
+    // Clear votes from the completed voting round before entering night
+    await supabase
+      .from('votes')
+      .delete()
+      .eq('game_id', game.id)
+
     // No win condition - transition to night phase
     const PHASE_TIMERS = {
       night: 120

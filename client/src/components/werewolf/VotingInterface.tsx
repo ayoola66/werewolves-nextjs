@@ -33,6 +33,8 @@ export default function VotingInterface({ gameState }: VotingInterfaceProps) {
   useEffect(() => {
     if (currentPlayerVote) {
       setHasVoted(true);
+    } else {
+      setHasVoted(false); // Reset when votes are cleared for a new round
     }
   }, [currentPlayerVote]);
 
