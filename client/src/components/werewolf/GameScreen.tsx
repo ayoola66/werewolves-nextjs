@@ -459,8 +459,7 @@ export default function GameScreen({ gameState }: GameScreenProps) {
                 {(game?.game?.currentPhase === "day" ||
                   game?.game?.phase === "day" ||
                   game?.phase === "day") &&
-                  gameState.getCurrentPlayer()?.isAlive &&
-                  gameState.getCurrentPlayer()?.isHost && (
+                  gameState.getCurrentPlayer()?.isAlive && (
                     <div className="mt-4 flex justify-center">
                       <Button
                         onClick={async () => {
@@ -471,7 +470,7 @@ export default function GameScreen({ gameState }: GameScreenProps) {
                         disabled={isStartingVote}
                         className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {isStartingVote ? '⏳ Starting...' : '🗳️ Start Voting Now'}
+                        {isStartingVote ? '⏳ Starting...' : '🗳️ Vote Now'}
                       </Button>
                     </div>
                   )}

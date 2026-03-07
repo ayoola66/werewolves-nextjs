@@ -403,7 +403,7 @@ export default function NightActionInterface({
   return (
     <div className="flex-grow flex flex-col md:flex-row gap-2 sm:gap-3 md:gap-4 p-2 sm:p-3 md:p-4 overflow-hidden">
       {/* Chat Panel - Different for werewolves vs villagers */}
-      <div className="flex-1 min-h-[180px] md:min-h-0 max-h-[300px] md:max-h-full flex flex-col gap-2">
+      <div className="order-2 md:order-none flex-1 min-h-0 max-h-[160px] md:max-h-full flex flex-col gap-2 overflow-hidden">
         {/* Werewolf Private Chat - Only visible to werewolves */}
         {isWerewolf && (
           <Card className="flex-1 bg-red-900/10 border-2 border-red-600">
@@ -420,7 +420,7 @@ export default function NightActionInterface({
         )}
         
         {/* Village Chat - Visible to ALL players during night */}
-        <Card className={`flex-1 ${isWerewolf ? 'max-h-[150px]' : ''} bg-indigo-900/10 border-2 border-indigo-600`}>
+        <Card className={`flex-1 ${isWerewolf ? 'max-h-[75px]' : 'max-h-[140px]'} md:max-h-full bg-indigo-900/10 border-2 border-indigo-600`}>
           <CardHeader className="pb-1 sm:pb-2 p-2 sm:p-3">
             <CardTitle className="font-cinzel text-sm sm:text-base md:text-lg text-indigo-400 flex items-center gap-2">
               🌙 Village Chat
@@ -433,7 +433,7 @@ export default function NightActionInterface({
       </div>
 
       {/* Action Selection Panel */}
-      <div className={isWerewolf ? "flex-1" : "flex-1 max-w-3xl mx-auto"}>
+      <div className={isWerewolf ? "order-1 md:order-none flex-1" : "order-1 md:order-none flex-1 max-w-3xl mx-auto"}>
         <Card
           className={`h-full bg-white dark:bg-gray-900/90 border-2 ${roleConfig.borderColor} flex flex-col`}
         >

@@ -43,7 +43,7 @@ serve(async (req) => {
     // Validate player is alive
     const { data: player } = await supabase
       .from('players')
-      .select('is_alive')
+      .select('is_alive, name')
       .eq('player_id', playerId)
       .eq('game_id', game.id)
       .single()
@@ -108,6 +108,17 @@ serve(async (req) => {
           phase: 'voting'
         })
     }
+
+    // Broadcast anonymous vote notification to all players
+    const voterName = player.name || 'A player'
+    await supabase
+      .from('chat_messages')
+      .insert({
+        game_id: game.id,
+        message: `🗳️ ${voterName} has voted.`,
+        type: 'system',
+        player_name: 'System',
+      })
 
     return new Response(
       JSON.stringify({ success: true }),

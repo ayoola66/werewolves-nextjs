@@ -311,7 +311,9 @@ export function useGameState() {
               hostId: game.host_id,
               status: game.status,
               currentPhase: game.current_phase || game.phase || "lobby",
-              phaseTimer: game.phase_timer || 0,
+              phaseTimer: game.phase_end_time
+                ? Math.max(0, Math.floor((new Date(game.phase_end_time).getTime() - Date.now()) / 1000))
+                : game.phase_timer || 0,
               nightCount: game.night_count,
               dayCount: game.day_count,
               lastPhaseChange: game.last_phase_change,
@@ -484,6 +486,17 @@ export function useGameState() {
 
     return () => clearInterval(interval);
   }, [currentScreen, gameState?.game?.gameCode, fetchGameState]);
+
+  // Game-over polling — catches missed Realtime game_over/finished events during active game
+  useEffect(() => {
+    if (currentScreen !== 'game' || !gameState?.game?.gameCode) return;
+    const interval = setInterval(async () => {
+      if (fetchGameStateRef.current) {
+        await fetchGameStateRef.current(gameState.game.gameCode);
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [currentScreen, gameState?.game?.gameCode]);
 
   // Phase timer checking - automatically transition phases when timer expires
   useEffect(() => {
